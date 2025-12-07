@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>woMen's Watches — Precious Time</title>
+</head>
+
+<body>
+
+<!-- LOAD NAVBAR FROM anavebar.html -->
+<div th:replace="anavebar :: navbar"></div>
+
+
+<!-- -------------------- MEN PAGE CONTENT START -------------------- -->
+
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Women's Watches — Precious Time</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  
+:root {
+  --bg: #bf58bb;
+  --rose: #D86C9B;
+  --muted: #555;
+  --card-radius: 16px;
+  --transition: 240ms cubic-bezier(.2,.9,.2,1);
+  --badge-sale: #FF6B81;
+  --badge-new: #FDCB82;
+  --footer-bg: linear-gradient(120deg, #e17ca8, #FFDDEE);
+  --section-bg: #FFF0F5; /* soft background for product section */
+}
+
+/* Body */
+body{margin:0; font-family:'Poppins', sans-serif; background:linear-gradient(to bottom, #fff, #FFEAF0); color:#333;}
+
+/* Headings */
+h1,h2,h3{margin:0;font-weight:600;}
+h2{margin-bottom:24px;color:var(--rose); text-align:center;}
+
+/* Hero Section */
+.hero {
+  width:100%;
+  height: 500px;
+  background:url('wh1.jpg') center/cover no-repeat;
+  display:flex; justify-content:center; align-items:center;
+  position:relative;
+}
+.hero-overlay {
+  position:absolute; inset:0;
+  background: rgba(216,108,155,0.3);
+}
+.hero h1{
+  position:relative;
+  color:#fff;
+  font-size:36px;
+  text-shadow:0 4px 12px rgba(0,0,0,0.4);
+  text-align:center;
+}
+
+/* Featured Row */
+.featured {
+  max-width:1200px; 
+  margin:32px auto; 
+  padding:32px 20px; 
+  display:flex; gap:18px; flex-wrap:wrap; 
+  justify-content:center; 
+  background: var(--section-bg);
+  border-radius: 20px;
+}
+.f-card{
+  width:260px; border-radius:16px; overflow:hidden; background:#fff;
+  border:1px solid #eee; box-shadow:0 6px 20px rgba(216,108,155,0.15); cursor:pointer;
+  transition: transform var(--transition), box-shadow var(--transition);
+  position:relative;
+}
+.f-card:hover{ transform: translateY(-6px); box-shadow:0 12px 28px rgba(216,108,155,0.2); }
+.f-card img{ width:100%; height:240px; object-fit:cover; display:block; border-bottom:1px solid #eee;}
+.f-card .meta{ padding:12px; text-align:center; }
+.f-card h3{ font-size:16px; color:#333; margin:6px 0; }
+.f-card p{ color:var(--muted); margin:0; font-size:13px; }
+
+/* Product Grid */
+#productContainer{
+  max-width:1200px; 
+  margin:20px auto 80px; 
+  padding:32px 20px; 
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, max-content));
+  gap:24px;
+  justify-content:center;
+  background: var(--section-bg);
+  border-radius:20px;
+}
+.card {
+  background:#fff; border-radius:var(--card-radius); overflow:hidden; border:1px solid #eee;
+  box-shadow:0 6px 18px rgba(216,108,155,0.1); transition: transform var(--transition), box-shadow var(--transition);
+  width:100%; max-width:220px; position:relative;
+}
+.card:hover{ transform: translateY(-6px); box-shadow:0 12px 28px rgba(216,108,155,0.2); }
+.card .thumb{ width:100%; height:200px; object-fit:cover; cursor:pointer; transition: transform var(--transition); border-bottom:1px solid #eee; }
+.card .thumb:hover{ transform: scale(1.05); }
+.card .body{ padding:12px; text-align:center; }
+.card h3{ margin:8px 0 4px; font-size:15px; color:#333; font-weight:500; }
+.card p.brand{ color:var(--muted); margin:0; font-size:13px; }
+.price-row{ display:flex; justify-content:center; margin-top:8px; }
+.price{ color:var(--rose); font-weight:700; font-size:15px; }
+.card .actions{ display:flex; gap:8px; padding:10px; justify-content:center; flex-wrap:wrap; }
+.btn{
+  padding:8px 14px; border-radius:12px; cursor:pointer; border:0; font-weight:600; font-size:13px; transition:all var(--transition);
+}
+.btn.ghost{ background:#fff; border:1px solid #eee; color:var(--rose); }
+.btn.primary{ background:var(--rose); color:#fff; }
+.btn.ghost:hover{ transform:translateY(-2px); background:rgba(216,108,155,0.05); }
+.btn.primary:hover{ transform:translateY(-2px); box-shadow:0 4px 16px rgba(216,108,155,0.4); }
+
+/* Badges */
+.badge{
+  position:absolute; top:12px; left:12px; padding:4px 8px; border-radius:12px;
+  color:#fff; font-size:12px; font-weight:600; text-transform:uppercase;
+  box-shadow:0 2px 6px rgba(0,0,0,0.2);
+}
+.badge.sale{ background:var(--badge-sale); }
+.badge.new{ background:var(--badge-new); color:#333; }
+
+/* Modal */
+.modal { display:none; position:fixed; inset:0; background: rgba(0,0,0,0.5); justify-content:center; align-items:center; padding:20px; overflow:auto; z-index:999; }
+.modal.open{ display:flex; }
+.modal-card{ width:100%; max-width:800px; border-radius:14px; background:#fff; padding:20px; display:flex; gap:20px; flex-wrap:wrap; position:relative; }
+.modal-left{ flex:1; min-width:200px; display:flex; justify-content:center; }
+.modal-left img{ width:100%; border-radius:12px; }
+.modal-right{ flex:1; display:flex; flex-direction:column; gap:8px; }
+.modal-right h2{ margin:0; color:var(--rose); font-size:20px; }
+.modal-actions{ margin-top:12px; display:flex; gap:10px; flex-wrap:wrap; }
+.close-x{ position:absolute; right:20px; top:20px; font-size:22px; cursor:pointer; background:transparent; border:0; color:#333; }
+
+/* Footer */
+footer { margin-top:40px; padding:40px 20px; text-align:center; color:#333; font-size:14px; background:var(--footer-bg); border-top:1px solid #FFDDEE;}
+footer p{ margin:4px 0; }
+footer .socials{ margin-top:8px; display:flex; justify-content:center; gap:12px; }
+footer .socials a{ text-decoration:none; color:var(--rose); font-weight:600; transition:all var(--transition); }
+footer .socials a:hover{ color:#FF3E6C; transform:translateY(-2px); }
+
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-overlay"></div>
+  <h1>New Female Collection</h1>
+</section>
+
+<!-- Featured Watches -->
+<div class="featured">
+  <div class="f-card" onclick="openModalFromStatic(this)">
+    <span class="badge new">New</span>
+    <img src="w1.jpg" alt="mk">
+    <div class="meta">
+      <h3>Michael Kors - Aurora</h3>
+      <p>Soft rose frame & crystal</p>
+    </div>
+  </div>
+  <div class="f-card" onclick="openModalFromStatic(this)">
+    <span class="badge sale">Sale</span>
+    <img src="w.jpg" alt="fs">
+    <div class="meta">
+      <h3>Fossil - Luma</h3>
+      <p>Trendy dial, modern strap</p>
+    </div>
+  </div>
+  <div class="f-card" onclick="openModalFromStatic(this)">
+    <span class="badge new">New</span>
+    <img src="w3.jpg" alt="gs">
+    <div class="meta">
+      <h3>Guess - Velvet</h3>
+      <p>Luxury minimal lines</p>
+    </div>
+  </div>
+</div>
+
+<h2>All Women's Watches</h2>
+
+<!-- Product Grid -->
+<main id="productContainer"></main>
+
+<!-- Modal -->
+<div id="productModal" class="modal">
+  <div class="modal-card">
+    <button class="close-x" onclick="closeModal()">✕</button>
+    <div class="modal-left"><img id="modalImg" src=""></div>
+    <div class="modal-right">
+      <h2 id="modalName"></h2>
+      <div class="meta-line"><strong>Brand:</strong> <span id="modalBrand"></span></div>
+      <div class="meta-line"><strong>Category:</strong> <span id="modalCategory"></span></div>
+      <div class="price-row"><div class="price" id="modalPrice"></div></div>
+      <div class="meta-line" id="modalStock"></div>
+      <p id="modalDesc"></p>
+      <div class="modal-actions">
+        <button class="btn primary" id="modalAdd">Add to Cart</button>
+        <button class="btn ghost" id="modalBuy">Buy Now</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>Precious Time — Rose Gold Female Collection © 2025</p>
+  <p>Follow us:</p>
+  <div class="socials">
+    <a href="http://localhost:8081/anavebar.html">Instagram</a>
+    <a href="#">Facebook</a>
+    <a href="#">Pinterest</a>
+  </div>
+</footer>
+
+
+
+<script>
+const API = "http://localhost:8081/admin/products";
+let CART = JSON.parse(localStorage.getItem("cart") || "[]");
+
+function updateCartUI() { 
+  localStorage.setItem("cart", JSON.stringify(CART)); 
+}
+
+/* ------------------ LOGIN CHECK ------------------ */
+async function isLoggedIn(){
+  try{
+    const res = await fetch("http://localhost:8081/api/user/check", {
+      method:"GET",
+      credentials:"include"
+    });
+    if(!res.ok) return false;
+    const data = await res.json();
+    return data.loggedIn === true;
+  }catch{
+    return false;
+  }
+}
+/* -------------------------------------------------- */
+
+let activeProduct = null;
+
+function renderModal(p){
+  document.getElementById("modalImg").src = p.image || '';
+  document.getElementById("modalName").textContent = p.name || '';
+  document.getElementById("modalBrand").textContent = p.brand || '';
+  document.getElementById("modalCategory").textContent = p.category || '';
+  document.getElementById("modalPrice").textContent = p.price 
+      ? '₹' + Number(p.price).toLocaleString('en-IN') : '0';
+  document.getElementById("modalStock").textContent = "Stock: " + (p.stock||0);
+  document.getElementById("modalDesc").textContent = p.description || '';
+}
+
+function showModal(){ 
+  document.getElementById("productModal").classList.add("open"); 
+  document.body.style.overflow="hidden"; 
+}
+function closeModal(){ 
+  document.getElementById("productModal").classList.remove("open"); 
+  document.body.style.overflow=""; 
+  activeProduct=null; 
+}
+
+function openModalFromStatic(el){
+  activeProduct = {
+    id: 'static',
+    name: el.querySelector('h3')?.textContent,
+    brand: 'Brand',
+    price: 0,
+    image: el.querySelector('img')?.src,
+    description: el.querySelector('p')?.textContent,
+    category: 'Women',
+    stock: '—'
+  };
+  renderModal(activeProduct);
+  showModal();
+}
+
+function openModalFromDataset(el){
+  activeProduct = {
+    id: el.dataset.id,
+    name: el.dataset.name,
+    brand: el.dataset.brand,
+    price: el.dataset.price,
+    image: el.dataset.img,
+    description: el.dataset.desc,
+    category: el.dataset.category,
+    stock: el.dataset.stock
+  };
+  renderModal(activeProduct);
+  showModal();
+}
+
+/* ------------------ ADD TO CART ------------------ */
+/* ------------------ ADD TO CART (Fixed) ------------------ */
+document.getElementById("modalAdd").onclick = ()=>{
+  if(!activeProduct) return;
+
+  const item = {
+    id: activeProduct.id,
+    name: activeProduct.name,
+    brand: activeProduct.brand,
+    price: activeProduct.price,
+    img: activeProduct.image,      // must be 'img' for cartSaved
+    category: activeProduct.category,
+    color: activeProduct.color || '',
+    stock: activeProduct.stock,
+    qty:1
+  };
+
+  CART.push(item);
+  updateCartUI();
+  alert('Added to cart');
+};
+
+/* -------------------------------------------------- */
+
+/* ------------------ BUY NOW WITH LOGIN CHECK ------------------ */
+document.getElementById("modalBuy").onclick = async ()=>{
+  if(!activeProduct) return;
+
+  const loggedIn = await isLoggedIn();
+  if(!loggedIn){
+    // Save redirect
+    sessionStorage.setItem("redirectAfterLogin", `address?product=${activeProduct.id}`);
+
+    // Show login modal if exists
+    const loginModal = document.getElementById("loginModal");
+    if(loginModal){
+      loginModal.style.display = "block";
+    }else{
+      window.location.href = "/login";
+    }
+    return;
+  }
+
+  // Logged in → proceed
+  localStorage.setItem('buy_item', JSON.stringify(activeProduct));
+  window.location.href = "address";
+};
+/* -------------------------------------------------- */
+
+async function loadProducts(){
+  try{
+    const res = await fetch(API);
+    const data = await res.json();
+    renderProducts(data.filter(p => p.category?.toLowerCase().includes('women')));
+  }catch(err){
+    console.error(err);
+  }
+}
+
+function renderProducts(list){
+  const box = document.getElementById("productContainer");
+  box.innerHTML = '';
+
+  list.forEach(p=>{
+    const card = document.createElement("div");
+    card.className='card';
+
+    const badge = (p.sale 
+      ? `<span class="badge sale">Sale</span>` 
+      : (p.isNew ? `<span class="badge new">New</span>` : '')
+    );
+
+    card.innerHTML = `
+      ${badge}
+      <img class="thumb" src="${p.imagePath||''}"
+        data-id="${p.id}"
+        data-name="${p.name}"
+        data-brand="${p.brand}"
+        data-img="${p.imagePath||''}"
+        data-desc="${p.description}"
+        data-category="${p.category}"
+        data-price="${p.price}"
+        data-stock="${p.stock}">
+      <div class="body">
+        <h3>${p.name}</h3>
+        <p class="brand">${p.brand}</p>
+        <div class="price-row"><div class="price">₹${Number(p.price).toLocaleString('en-IN')}</div></div>
+      </div>
+      <div class="actions">
+        <button class="btn ghost">Quick View</button>
+        <button class="btn primary buyBtn">Buy</button>
+      </div>
+    `;
+
+    // Open modal on image click
+    card.querySelector('.thumb').onclick = (e)=> openModalFromDataset(e.target);
+
+    // BUY button click (same login logic)
+    card.querySelector('.buyBtn').onclick = async ()=>{
+      activeProduct = {
+        id: p.id,
+        name: p.name,
+        brand: p.brand,
+        price: p.price,
+        image: p.imagePath,
+        description: p.description,
+        category: p.category,
+        stock: p.stock
+      };
+
+      const loggedIn = await isLoggedIn();
+      if(!loggedIn){
+        sessionStorage.setItem("redirectAfterLogin", `address?product=${p.id}`);
+
+        const loginModal = document.getElementById("loginModal");
+        if(loginModal){
+          loginModal.style.display = "block";
+        }else{
+          window.location.href = "/login";
+        }
+        return;
+      }
+
+      window.location.href = `address?product=${p.id}`;
+    };
+
+    box.appendChild(card);
+  });
+}
+
+loadProducts();
+
+window.onclick = (e)=>{ 
+  if(e.target.id === 'productModal') closeModal(); 
+};
+</script>
+
+
+
+
+
+</body>
+</html>

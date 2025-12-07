@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Checkout — Precious Time</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #050505;
+      --card: #0b0b0b;
+      --muted: #9aa3a8;
+      --gold: #C9A24A;
+      --accent: #0ea5a4;
+      --glass: rgba(255, 255, 255, 0.04);
+      --radius: 14px;
+      --max-width: 980px;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; font-family: 'Poppins', sans-serif; background: linear-gradient(180deg,#040404,#0b1112); color: #fff; }
+    body { display: flex; align-items: center; justify-content: center; padding: 36px; }
+
+    .shell { width: 100%; max-width: var(--max-width); display: grid; grid-template-columns: 1fr 420px; gap: 28px; }
+
+    /* LEFT PANEL: Checkout */
+    .panel { background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.03); padding: 26px; border-radius: var(--radius); box-shadow:0 20px 60px rgba(2,6,23,0.6); }
+    .brand { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; }
+    .logo { width: 56px; height: 56px; border-radius: 10px; background: linear-gradient(135deg,var(--gold),#8f6f2e); display: flex; align-items: center; justify-content: center; font-weight: 800; color: #081010; }
+    .brand h1 { font-size: 18px; margin: 0; color: var(--gold); letter-spacing: 0.6px; }
+    .brand p { margin: 0; color: var(--muted); font-size: 13px; }
+
+    .section { margin-top: 18px; }
+    .title { display: flex; justify-content: space-between; align-items: center; }
+    .title h2 { margin: 0; font-size: 16px; color: #fff; }
+    .title small { color: var(--muted); }
+
+    /* Payment options */
+    .payments { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+    .pay-card { flex: 1 1 180px; padding: 12px; border-radius: 12px; background: var(--card); border: 1px solid rgba(255,255,255,0.03); cursor: pointer; display: flex; align-items: center; gap: 10px; }
+    .pay-card.active { outline: 2px solid rgba(201,162,74,0.18); box-shadow:0 12px 30px rgba(201,162,74,0.06); }
+    .pay-card img { width: 52px; }
+    .pay-card .label { font-weight: 700; color: #fff; }
+    .small { font-size: 13px; color: var(--muted); }
+
+    /* Payment panels */
+    .payment-panel { margin-top: 14px; padding: 14px; border-radius: 10px; background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005)); border:1px solid rgba(255,255,255,0.02); }
+
+    .qr-wrap { display: flex; gap: 14px; align-items: center; }
+    .qr-box { width: 160px; height: 160px; background: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+    .qr-box img { width: 140px; height: 140px; object-fit: contain; }
+    .qr-instr { color: var(--muted); font-size: 13px; }
+
+    .card-form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .field { display: flex; flex-direction: column; }
+    label { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+    input, textarea { padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.04); background: transparent; color: #fff; }
+    textarea { min-height: 84px; }
+
+    /* RIGHT PANEL: Address & Summary */
+    .aside .panel { padding: 20px; }
+    .summary { display: flex; flex-direction: column; gap: 12px; }
+    .summary .row { display: flex; justify-content: space-between; align-items: center; }
+    .summary .total { font-size: 20px; font-weight: 800; color: var(--gold); }
+    .address-block { margin-top: 14px; display: none; }
+    .address-block.active { display: block; }
+
+    .cta { margin-top: 16px; display: flex; gap: 10px; }
+    .btn { flex: 1; padding: 12px; border-radius: 10px; border: 0; background: linear-gradient(90deg,var(--gold),#b58c40); color: #081010; font-weight: 800; cursor: pointer; }
+    .btn.secondary { background: transparent; border:1px solid rgba(255,255,255,0.06); color: var(--muted); }
+
+    .note { font-size: 13px; color: var(--muted); margin-top: 12px; }
+
+    /* Popup */
+    .popup { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: linear-gradient(180deg,rgba(0,0,0,0.6),rgba(0,0,0,0.8)); z-index: 9999; }
+    .popup .card { background: linear-gradient(180deg,#081018,#0e1c24); padding: 28px; border-radius: 14px; text-align: center; border:1px solid rgba(255,255,255,0.03); }
+    .popup h3 { color: var(--gold); margin: 0; }
+    .popup p { color: var(--muted); margin-top: 8px; }
+    .popup input { margin-top: 12px; padding: 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.04); background: transparent; color: #fff; text-align: center; }
+    .popup .ok { margin-top: 16px; padding: 10px 18px; border-radius: 10px; border: 0; background: var(--gold); color: #081010; font-weight: 800; cursor: pointer; }
+
+    @media(max-width:980px){ .shell{grid-template-columns:1fr} .aside{order:2} }
+  </style>
+</head>
+<body>
+  <div class="shell">
+
+    <!-- LEFT PANEL: Checkout -->
+    <div class="panel">
+      <div class="brand">
+        <div class="logo">PT</div>
+        <div><h1>PRECIOUS TIME</h1><p>Secure checkout — Luxury watches</p></div>
+      </div>
+
+      <!-- Payment Options -->
+      <div class="section">
+        <div class="title"><h2>Choose Payment</h2><small class="small">Select one to continue</small></div>
+        <div class="payments">
+          <div class="pay-card" id="pay-cod" data-method="cod">
+            <img src="https://img.icons8.com/ios/100/ffffff/cash-in-hand.png" alt="cod">
+            <div>
+              <div class="label">Cash on Delivery</div>
+              <div class="small">Pay when you receive</div>
+            </div>
+          </div>
+          <div class="pay-card" id="pay-upi" data-method="upi">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5b/Google_Pay_Logo.png" alt="upi">
+            <div>
+              <div class="label">UPI / QR</div>
+              <div class="small">Scan the QR to pay instantly</div>
+            </div>
+          </div>
+          <div class="pay-card" id="pay-card" data-method="card">
+            <img src="https://img.icons8.com/ios/100/ffffff/credit-card.png" alt="card">
+            <div>
+              <div class="label">Card Payment</div>
+              <div class="small">Visa, MasterCard, Amex</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="payment-panel" id="paymentPanel" style="display:none">
+          <!-- UPI Panel -->
+          <div id="panel-upi" style="display:none">
+            <div class="qr-wrap">
+              <div class="qr-box"><img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=precious-time-pay" alt="qr"></div>
+              <div>
+                <div class="qr-instr">Open your UPI app (PhonePe, GPay, Paytm) and scan the QR code. After payment, click <strong>I've Paid</strong>.</div>
+                <div style="margin-top:12px; display:flex; gap:8px; align-items:center">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/7/7b/PhonePe_Logo.png" width="40" alt="phonepe">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/5/5b/Google_Pay_Logo.png" width="40" alt="gpay">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/5/57/Paytm_logo.png" width="40" alt="paytm">
+                </div>
+                <div style="margin-top:14px; display:flex; gap:10px">
+                  <button class="btn" id="btn-paid">I've Paid</button>
+                  <button class="btn secondary" id="btn-cancel-upi">Cancel</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card Panel -->
+          <div id="panel-card" style="display:none">
+            <div class="card-form">
+              <div class="field"><label>Card Number</label><input id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19"></div>
+              <div class="field"><label>Expiry</label><input id="cardExp" placeholder="MM/YY" maxlength="5"></div>
+              <div class="field"><label>CVV</label><input id="cardCvv" placeholder="123" maxlength="4"></div>
+              <div class="field"><label>Name on Card</label><input id="cardName" placeholder="Full name"></div>
+            </div>
+            <div style="margin-top:12px; display:flex; gap:8px">
+              <button class="btn" id="btn-pay-card">Pay ₹<span id="cardPayAmount">0</span></button>
+              <button class="btn secondary" id="btn-cancel-card">Cancel</button>
+            </div>
+          </div>
+
+          <!-- COD Panel -->
+          <div id="panel-cod" style="display:none">
+            <div class="small">You will pay the delivery person in cash. Orders are held for 48 hours for confirmation.</div>
+            <div style="margin-top:12px; display:flex; gap:8px">
+              <button class="btn" id="btn-cod-continue">Continue</button>
+              <button class="btn secondary" id="btn-cod-cancel">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">Your payment is processed securely. Precious Time never stores full card numbers on this device.</div>
+    </div>
+
+    <!-- RIGHT PANEL: Address & Summary -->
+    <div class="aside">
+      <div class="panel">
+        <div class="title"><h2>Delivery Details</h2><small class="small">Fill details after payment method</small></div>
+
+        <div class="address-block" id="addressBlock">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px">
+            <div class="field"><label>Full name</label><input id="name" required></div>
+            <div class="field"><label>Phone</label><input id="phone" required></div>
+          </div>
+          <div class="field" style="margin-top:10px"><label>Email</label><input id="email"></div>
+          <div class="field" style="margin-top:10px"><label>Address</label><textarea id="address"></textarea></div>
+          <div style="display:flex; gap:10px; margin-top:10px">
+            <div class="field" style="flex:1"><label>Pincode</label><input id="pincode"></div>
+            <div style="flex:1" class="field"><label>State</label><input id="state"></div>
+          </div>
+          <div class="cta">
+            <button class="btn" id="placeOrderBtn">Place Order</button>
+            <button class="btn secondary" id="backToPay">Change Payment</button>
+          </div>
+        </div>
+
+        <div class="summary" style="margin-top:16px">
+          <div class="row"><div class="small">Subtotal</div><div id="subTotal">₹0</div></div>
+          <div class="row"><div class="small">Shipping</div><div id="shipping">₹50</div></div>
+          <div class="row"><div class="small">Tax</div><div id="tax">₹0</div></div>
+          <div class="row total"><div>Total</div><div class="total" id="grandTotal">₹0</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popup for OTP -->
+  <div id="popup" class="popup">
+    <div class="card">
+      <h3>Enter OTP</h3>
+      <p id="popupText">An OTP has been sent to your email.</p>
+      <input id="otpInput" placeholder="Enter OTP">
+      <button class="ok" id="confirmOtpBtn">Confirm</button>
+    </div>
+  </div>
+<script>
+let chosenMethod = null;
+
+// Payment selection
+const payCards = document.querySelectorAll('.pay-card');
+payCards.forEach(pc => pc.addEventListener('click', () => {
+  payCards.forEach(x => x.classList.remove('active'));
+  pc.classList.add('active');
+  chosenMethod = pc.dataset.method;
+  document.getElementById('paymentPanel').style.display = 'block';
+  document.getElementById('panel-upi').style.display = chosenMethod === 'upi' ? 'block' : 'none';
+  document.getElementById('panel-card').style.display = chosenMethod === 'card' ? 'block' : 'none';
+  document.getElementById('panel-cod').style.display = chosenMethod === 'cod' ? 'block' : 'none';
+}));
+
+// Payment actions
+document.getElementById('btn-paid')?.addEventListener('click', () => document.getElementById('addressBlock').classList.add('active'));
+document.getElementById('btn-cod-continue')?.addEventListener('click', () => document.getElementById('addressBlock').classList.add('active'));
+document.getElementById('btn-pay-card')?.addEventListener('click', () => document.getElementById('addressBlock').classList.add('active'));
+
+document.getElementById('backToPay').addEventListener('click', () => {
+  document.getElementById('addressBlock').classList.remove('active');
+});
+
+// Place Order → send OTP
+document.getElementById('placeOrderBtn').addEventListener('click', async () => {
+  const order = {
+    name: document.getElementById('name').value.trim(),
+    phone: document.getElementById('phone').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    address: document.getElementById('address').value.trim(),
+    pincode: document.getElementById('pincode').value.trim(),
+    state: document.getElementById('state').value.trim(),
+    paymentMethod: chosenMethod || 'unknown'
+  };
+
+  if (!order.name || !order.phone || !order.address || !order.pincode) {
+    alert('Fill all required fields'); 
+    return;
+  }
+
+  try {
+    const res = await fetch('http://localhost:8081/api/orders/place', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(order)
+    });
+    const data = await res.json();
+    document.getElementById('popupText').innerText = data.message || 'OTP sent to your email';
+    document.getElementById('popup').style.display = 'flex';
+  } catch (err) {
+    alert('Failed to send OTP'); 
+    console.error(err);
+  }
+});
+
+// Confirm OTP
+document.getElementById('confirmOtpBtn').addEventListener('click', async () => {
+  const otp = document.getElementById('otpInput').value.trim();
+  const email = document.getElementById('email').value.trim();
+
+  if (!otp) { 
+    alert('Enter OTP'); 
+    return; 
+  }
+
+  try {
+    const res = await fetch('http://localhost:8081/api/orders/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, otp })
+    });
+    const data = await res.json();
+    alert(data.message);
+    if (data.success) {
+      document.getElementById('popup').style.display = 'none';
+      window.location.href = '/';
+    }
+  } catch (err) { 
+    alert('OTP verification failed'); 
+    console.error(err);
+  }
+});
+</script>
+
+</body>
+</html>

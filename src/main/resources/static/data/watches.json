@@ -1,0 +1,20 @@
+[
+    {
+        "name": "Rolex Submariner",
+        "price": 150000,
+        "page": "/men",
+        "image": "/images/rolex1.jpg"
+    },
+    {
+        "name": "Omega Seamaster",
+        "price": 120000,
+        "page": "/men",
+        "image": "/images/omega1.jpg"
+    },
+    {
+        "name": "Casio Vintage Gold",
+        "price": 2500,
+        "page": "/collection",
+        "image": "/images/casio1.jpg"
+    }
+]

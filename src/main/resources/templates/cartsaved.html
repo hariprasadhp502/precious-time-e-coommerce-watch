@@ -1,0 +1,219 @@
+<!-- Updated Cart Page with Premium UI: Side-by-Side Preview + Gold Theme -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>My Cart — Precious Time</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+body {
+    font-family:'Poppins',sans-serif;
+    background:url("https://png.pngtree.com/thumb_back/fw800/background/20251105/pngtree-close-up-of-a-black-automatic-watch-face-with-silver-hands-image_20263754.webp") center/cover no-repeat;
+    margin:0; padding:0; color:#fff;
+}
+body::before{
+    content:"";
+    position:fixed; top:0; left:0; width:100%; height:100%;
+    background:rgba(0,0,0,0.65);
+    backdrop-filter:blur(6px);
+    z-index:-1;
+}
+.container{max-width:1000px;margin:60px auto;padding:20px;}
+h2{text-align:center;margin-bottom:30px;font-weight:700;color:#FFD700;}
+
+.cart-item{
+    display:flex;justify-content:space-between;align-items:center;
+    background:rgba(255,255,255,0.08); padding:15px;border-radius:14px;
+    margin-bottom:20px;box-shadow:0 4px 12px rgba(0,0,0,0.4);
+    color:white; backdrop-filter:blur(10px);
+    transition:0.3s;
+}
+.cart-item:hover{transform:scale(1.02);}
+.cart-left{display:flex;gap:20px;align-items:center;cursor:pointer;}
+.cart-left img{width:100px;height:100px;object-fit:cover;border-radius:12px;box-shadow:0 0 10px rgba(0,0,0,0.3);}    
+.remove-btn{background:#ef4444;color:white;border:none;padding:6px 12px;
+    border-radius:8px;cursor:pointer;font-weight:600;}
+
+.buy-btn{
+    display:block;width:220px;margin:30px auto;padding:14px;
+    background:linear-gradient(135deg,#FFD700,#e6c200);color:black;
+    border:none;border-radius:30px;font-size:16px;cursor:pointer;
+    font-weight:600; box-shadow:0 0 12px rgba(255,215,0,0.7);
+}
+.empty-cart{text-align:center;font-size:18px;color:#e4e4e4;margin-top:50px;}
+
+/* SIDE-BY-SIDE PREMIUM MODAL */
+#previewModal{
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    background:rgba(0,0,0,0.75);display:none;
+    align-items:center;justify-content:center;z-index:999;
+}
+
+#previewBox{
+    width:800px;display:flex;gap:25px;
+    background:rgba(255,255,255,0.1);
+    border-radius:18px;padding:25px;
+    box-shadow:0 0 20px rgba(0,0,0,0.5);
+    color:white; backdrop-filter:blur(15px);
+    animation:fadeIn 0.25s;
+}
+
+#previewLeft img{
+    width:330px;height:330px;object-fit:cover;border-radius:14px;
+    box-shadow:0 0 15px rgba(0,0,0,0.5);
+}
+
+#previewRight{
+    flex:1;
+}
+#previewRight h3{
+    font-size:26px;margin:0;color:#FFD700;
+}
+#previewRight p{
+    margin:8px 0;font-size:15px;color:#f8f8f8;
+}
+#specBox{
+    margin-top:15px;padding:12px;
+    background:rgba(255,255,255,0.08);
+    border-radius:12px;font-size:14px;color:#ddd;
+    border-left:3px solid #FFD700;
+}
+
+.close-btn{
+    margin-top:20px;padding:10px 20px;background:#FFD700;color:black;
+    border:none;border-radius:10px;cursor:pointer;font-weight:600;
+}
+
+@keyframes fadeIn{from{opacity:0;transform:scale(0.9);} to{opacity:1;transform:scale(1);}}
+</style>
+</head>
+
+<body>
+
+<div th:replace="anavebar :: navbar"></div>
+
+<div class="container">
+    <h2>My Cart</h2>
+    <div id="cart-items"></div>
+    <button class="buy-btn" onclick="goToAddress()">Buy Now</button>
+</div>
+
+<!-- PREMIUM SIDE-BY-SIDE MODAL -->
+<div id="previewModal" onclick="closePreview()">
+    <div id="previewBox" onclick="event.stopPropagation()">
+
+        <div id="previewLeft">
+            <img id="previewImg">
+        </div>
+
+        <div id="previewRight">
+            <h3 id="previewName"></h3>
+            <p id="previewBrand"></p>
+            <p id="previewPrice"></p>
+            <p id="previewDesc"></p>
+
+            <div id="specBox"></div>
+
+            <button class="close-btn" onclick="closePreview()">Close</button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+async function isLoggedIn() {
+    try{
+        const res = await fetch("http://localhost:8081/api/user/check", {
+            method:"GET",
+            credentials:"include"
+        });
+        const data = await res.json();
+        return data.loggedIn;
+    }catch{
+        return false;
+    }
+}
+
+function renderCart(){
+    const container=document.getElementById("cart-items");
+    container.innerHTML="";
+
+    if(cart.length===0){
+        container.innerHTML='<p class="empty-cart">Your cart is empty.</p>';
+        return;
+    }
+
+    cart.forEach((item,index)=>{
+        const div=document.createElement("div");
+        div.className="cart-item";
+        div.innerHTML=`
+            <div class="cart-left" onclick="openPreview(${index})">
+                <img src="${item.img}">
+                <div class="cart-details">
+                    <strong>${item.name}</strong><br>
+                    <span>Brand: ${item.brand || "Not available"}</span><br>
+                    <span>Price: ₹${item.price}</span>
+                </div>
+            </div>
+            <button class="remove-btn" onclick="removeFromCart(${index})">Remove</button>
+        `;
+        container.appendChild(div);
+    });
+}
+
+function openPreview(i){
+    const item = cart[i];
+
+    document.getElementById("previewImg").src = item.img;
+    document.getElementById("previewName").innerText = item.name;
+    document.getElementById("previewBrand").innerText = "Brand: " + (item.brand || "Not available");
+    document.getElementById("previewPrice").innerText = "Price: ₹" + item.price;
+    document.getElementById("previewDesc").innerText = item.description || "No description available";
+
+    document.getElementById("specBox").innerHTML = `
+        <b style="color:#FFD700;font-size:16px;">Specifications:</b><br><br>
+        • Water Resistance: 50m<br>
+        • Movement: Quartz<br>
+        • Warranty: 2 Years<br>
+        • Strap: Premium Leather<br>
+        • Case: Stainless Steel<br>
+    `;
+
+    document.getElementById("previewModal").style.display="flex";
+}
+
+function closePreview(){
+    document.getElementById("previewModal").style.display="none";
+}
+
+function removeFromCart(index){
+    cart.splice(index,1);
+    localStorage.setItem("cart",JSON.stringify(cart));
+    renderCart();
+}
+
+async function goToAddress(){
+    if(cart.length === 0){
+        alert("Your cart is empty!");
+        return;
+    }
+
+    const logged = await isLoggedIn();
+
+    if(!logged){
+        window.location.href = "/login";
+        return;
+    }
+
+    window.location.href = "address";
+}
+
+renderCart();
+</script>
+
+</body>
+</html>

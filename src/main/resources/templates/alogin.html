@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Precious Time — Login/Register</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family: 'Montserrat', sans-serif;}
+body{
+    height:100vh;
+ 
+    justify-content:center;
+    align-items:center;
+    position:relative;
+    background:url("https://png.pngtree.com/thumb_back/fw800/background/20251105/pngtree-close-up-of-a-black-automatic-watch-face-with-silver-hands-image_20263754.webp") center/cover no-repeat;
+}
+body::before{
+    content:"";
+    position:absolute; top:0; left:0;
+    width:100%; height:100%;
+    background:rgba(0,0,0,0.65);
+    backdrop-filter:blur(4px);
+    z-index:-1;
+}
+.page-wrapper{ width:100%; position:absolute; top:80px; }
+.container{
+    width:360px;
+    padding:35px 35px 45px;
+    border-radius:15px;
+    background:rgba(255,255,255,0.08);
+    box-shadow:0 0 25px rgba(0,0,0,0.4);
+    backdrop-filter:blur(18px);
+    color:#fff;
+    animation:fadeIn 0.7s ease;
+    margin:auto;
+    margin-top:120px;
+}
+@keyframes fadeIn{from{opacity:0; transform:scale(0.95);} to{opacity:1; transform:scale(1);}}
+h2{text-align:center;font-size:28px;margin-bottom:25px;color:#FFD700;}
+input{width:100%; padding:14px; margin-bottom:18px; border:none; border-radius:10px; font-size:14px; background:rgba(255,255,255,0.23); color:#fff;}
+input::placeholder{color:#e4e4e4;}
+input:focus{outline:2px solid #FFD700; background:rgba(255,255,255,0.32);}
+button{width:100%; padding:14px; margin-top:5px; background:#FFD700; border:none; border-radius:10px; font-size:16px; font-weight:600; cursor:pointer; transition:0.3s;}
+button:hover{background:#e6c200;}
+.toggle-link{margin-top:15px;text-align:center;cursor:pointer;font-weight:600;color:#FFD700;transition:0.3s;}
+.toggle-link:hover{color:#e6c200;}
+.hidden{display:none;}
+.eye{position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer; filter:brightness(1.3);}
+.input-group{position:relative;}
+#logoutBtn{background:#ff4444; margin-top:10px;}
+#logoutBtn:hover{background:#d93d3d;}
+.error-msg{color:#ff6666; font-size:13px; margin-bottom:10px;}
+.success-msg{color:#00ff99; font-size:13px; margin-bottom:10px;}
+</style>
+</head>
+
+<body>
+
+<div th:replace="anavebar :: navbar"></div>
+
+<div class="page-wrapper">
+<div class="container" id="authContainer">
+
+    <!-- LOGIN -->
+    <div id="loginForm">
+        <h2>Login</h2>
+        <div id="loginMsg" class="error-msg hidden"></div>
+        <div class="input-group">
+            <input type="email" id="loginEmail" placeholder="Email" required>
+        </div>
+        <div class="input-group">
+            <input type="password" id="loginPassword" placeholder="Password" required>
+            <img src="https://cdn-icons-png.flaticon.com/512/159/159604.png" width="20" class="eye" onclick="togglePass('loginPassword', this)">
+        </div>
+        <button type="button" id="loginBtn">Login</button>
+        <div class="toggle-link" onclick="showRegister()">Don't have an account? Register</div>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="registerForm" class="hidden">
+        <h2>Create Account</h2>
+        <div id="regMsg" class="error-msg hidden"></div>
+        <input type="text" id="regName" placeholder="Full Name" required>
+        <input type="email" id="regEmail" placeholder="Email" required>
+        <div class="input-group">
+            <input type="password" id="regPass" placeholder="Password" required>
+            <img src="https://cdn-icons-png.flaticon.com/512/159/159604.png" width="20" class="eye" onclick="togglePass('regPass', this)">
+        </div>
+        <button type="button" id="regBtn">Register</button>
+        <div class="toggle-link" onclick="showLogin()">Already have an account? Login</div>
+    </div>
+
+    <!-- LOGOUT -->
+    <button id="logoutBtn" class="hidden">Logout</button>
+
+</div>
+</div>
+
+<script>
+
+// Show/Hide Forms
+function showRegister() {
+    document.getElementById("loginForm").classList.add("hidden");
+    document.getElementById("registerForm").classList.remove("hidden");
+}
+function showLogin() {
+    document.getElementById("registerForm").classList.add("hidden");
+    document.getElementById("loginForm").classList.remove("hidden");
+}
+
+// Toggle password
+function togglePass(id, el){
+    const input = document.getElementById(id);
+    input.type = input.type === "password" ? "text" : "password";
+    el.style.opacity = input.type==="text" ? "0.6" : "1";
+}
+
+// Email validation
+function isValidEmail(email){ return /^[^\s@]+@gmail\.com$/.test(email); }
+
+// Show message
+function showMessage(id, msg, isError=true){
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.classList.remove("hidden");
+    el.classList.toggle("error-msg", isError);
+    el.classList.toggle("success-msg", !isError);
+}
+
+// Hide message
+function hideMessage(id){ document.getElementById(id).classList.add("hidden"); }
+
+// ---------------- CHECK LOGIN ----------------
+async function checkLogin(){
+    try{
+        const res = await fetch("http://localhost:8081/api/user/check", {
+            method:"GET",
+            credentials:"include"
+        });
+        if(res.ok){
+            const data = await res.json();
+            if(data.loggedIn){
+                document.getElementById("logoutBtn").classList.remove("hidden");
+                document.getElementById("loginForm").classList.add("hidden");
+                document.getElementById("registerForm").classList.add("hidden");
+            } else {
+                document.getElementById("logoutBtn").classList.add("hidden");
+                showLogin();
+            }
+        }
+    }catch(e){
+        console.error("Login check failed", e);
+        document.getElementById("logoutBtn").classList.add("hidden");
+        showLogin();
+    }
+}
+checkLogin();
+
+// ---------------- LOGIN ----------------
+document.getElementById("loginBtn").addEventListener("click", async ()=>{
+    hideMessage("loginMsg");
+    const email = document.getElementById("loginEmail").value.trim();
+    const pass = document.getElementById("loginPassword").value.trim();
+
+    if(!isValidEmail(email)){ showMessage("loginMsg","Email must end with @gmail.com"); return; }
+
+    try{
+        const res = await fetch("http://localhost:8081/api/user/login", {
+            method:"POST",
+            credentials:"include",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({email,password:pass})
+        });
+        const data = await res.json();
+
+        if(data.status==="success"){
+            showMessage("loginMsg","Login Successful!", false);
+            checkLogin();
+            setTimeout(()=>window.location.href="/men", 1200);
+        } else {
+            showMessage("loginMsg", data.message || "Invalid Email or Password");
+        }
+
+    }catch(err){
+        showMessage("loginMsg","Server error. Try later.");
+    }
+});
+
+// ---------------- REGISTER ----------------
+document.getElementById("regBtn").addEventListener("click", async ()=>{
+    hideMessage("regMsg");
+    const name = document.getElementById("regName").value.trim();
+    const email = document.getElementById("regEmail").value.trim();
+    const pass = document.getElementById("regPass").value.trim();
+
+    if(!isValidEmail(email)){ showMessage("regMsg","Email must end with @gmail.com"); return; }
+    if(name.length < 3){ showMessage("regMsg","Name too short"); return; }
+    if(pass.length < 6){ showMessage("regMsg","Password must be at least 6 characters"); return; }
+
+    try{
+        const res = await fetch("http://localhost:8081/api/user/register", {
+            method:"POST",
+            credentials:"include",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({name,email,password:pass})
+        });
+        const data = await res.json();
+
+        if(data.status==="success"){
+            showMessage("regMsg","Registration Successful!", false);
+            setTimeout(showLogin,1500);
+        } else {
+            showMessage("regMsg", data.message || "Registration failed");
+        }
+
+    }catch(err){
+        showMessage("regMsg","Server error. Try later.");
+    }
+});
+
+// ---------------- LOGOUT ----------------
+document.getElementById("logoutBtn").addEventListener("click", async ()=>{
+    try{
+        await fetch("http://localhost:8081/api/user/logout", {
+            method:"POST",
+            credentials:"include"
+        });
+    }catch(e){ console.error(e); }
+
+    showMessage("loginMsg","Logged Out", false);
+    checkLogin();
+});
+</script>
+
+
+
+</body>
+</html>

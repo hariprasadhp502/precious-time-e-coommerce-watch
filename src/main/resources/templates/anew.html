@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Men's Watches — Precious Time</title>
+
+
+<body>
+
+<!-- LOAD NAVBAR FROM anavebar.html -->
+<div th:replace="anavebar :: navbar"></div>
+
+<meta charset="UTF-8">
+<title>Accessories — Precious Time</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --accent:#00aaff; --deep:#033e66; --muted:#7b8a96; --shadow:0 12px 40px rgba(2,8,23,0.22); --radius:16px; --max-width:1200px;
+  --success:#16a34a; --bg1:rgba(10,33,63,0.55); --bg2:rgba(2,110,164,0.32);
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Poppins',sans-serif;}
+body{background:radial-gradient(1000px 400px at 10% 10%, rgba(4,138,205,0.14), transparent 10%), linear-gradient(180deg, #f2f9ff 0%, #e2f5ff 100%); color:var(--deep);}
+.wrapper{max-width:var(--max-width);margin:0 auto;padding:20px;}
+h1,h2,h3,h4{color:var(--deep);}
+.hero{background:linear-gradient(135deg, rgba(255,255,255,0.65), rgba(255,255,255,0.45)); backdrop-filter:blur(6px) saturate(140%); border-radius:22px;padding:26px;display:flex;gap:18px;align-items:center;box-shadow:var(--shadow);margin-bottom:18px;}
+.hero-left{flex:1}
+.hero-right img{width:220px;border-radius:12px;box-shadow:0 12px 40px rgba(2,8,23,0.08);}
+.tabs{display:flex;gap:10px;justify-content:center;margin:18px 0;flex-wrap:wrap;}
+.tab{padding:10px 16px;border-radius:999px;background:rgba(255,255,255,0.9);cursor:pointer;font-weight:700;box-shadow:0 8px 20px rgba(2,8,23,0.04);}
+.tab.active{background:linear-gradient(90deg,var(--accent),#4cc1ff);color:white;box-shadow:0 12px 36px rgba(2,8,23,0.12);}
+.container{display:grid;grid-template-columns:260px 1fr;gap:20px;margin-top:6px;}
+@media(max-width:990px){ .container{grid-template-columns:1fr;padding:0 8px} .hero-right{display:none} }
+.sidebar{background:linear-gradient(180deg, rgba(255,255,255,0.75), rgba(255,255,255,0.6));border-radius:14px;padding:18px;box-shadow:var(--shadow);}
+.brand-item{padding:10px;border-radius:10px;cursor:pointer;font-weight:700;color:var(--deep);background:transparent;margin-bottom:6px;}
+.brand-item:hover{background:rgba(5,120,180,0.06);}
+.brand-item.active{background:linear-gradient(90deg,var(--accent),#7bd6ff);color:white;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px;}
+.card{background:linear-gradient(180deg, rgba(255,255,255,0.86), rgba(252,255,255,0.92));border-radius:12px;padding:12px;box-shadow:0 14px 32px rgba(2,8,23,0.06);position:relative;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease;}
+.card:hover{transform:translateY(-8px);box-shadow:0 28px 60px rgba(2,8,23,0.12);}
+.card img{width:100%;height:180px;object-fit:cover;border-radius:10px;}
+.card h3{margin:10px 0 6px;font-size:16px;}
+.meta{display:flex;justify-content:space-between;align-items:center;}
+.price{color:var(--deep);font-weight:800;}
+.stock{font-size:13px;color:var(--muted);}
+.heart{position:absolute;right:12px;top:12px;background:rgba(255,255,255,0.95);padding:8px;border-radius:50%;box-shadow:0 8px 20px rgba(2,8,23,0.06);font-weight:800;cursor:pointer;user-select:none;}
+.modal{display:none;position:fixed;inset:0;background:rgba(3,8,15,0.55);backdrop-filter:blur(2px);justify-content:center;align-items:center;padding:20px;z-index:9999;}
+.modal.active{display:flex;}
+.modal-card{width:980px;max-width:98%;background:linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,255,255,0.95));border-radius:16px;display:flex;gap:18px;padding:18px;position:relative;box-shadow:0 30px 70px rgba(2,8,23,0.28);}
+.modal-left{width:48%}
+.modal-left img{width:100%;height:460px;object-fit:cover;border-radius:12px;}
+.modal-right{flex:1;display:flex;flex-direction:column;gap:8px;}
+.exit{position:absolute;right:12px;top:12px;background:transparent;border-radius:8px;padding:8px;font-size:22px;cursor:pointer;color:var(--muted);border:1px solid rgba(2,8,23,0.04);}
+.badge{display:inline-block;padding:6px 10px;border-radius:10px;background:rgba(0,170,255,0.08);color:var(--accent);font-weight:700;font-size:13px;margin-right:8px;}
+.actions{display:flex;gap:12px;margin-top:14px;}
+.btn{padding:12px 16px;border-radius:10px;border:0;font-weight:800;cursor:pointer;}
+.add{background:linear-gradient(90deg,var(--accent),#4cc1ff);color:white;}
+.buy{background:linear-gradient(90deg,#00c176,#0bb07a);color:white;}
+.wish{background:transparent;border:1px solid rgba(2,8,23,0.06);color:var(--deep);}
+.footer{margin-top:60px;padding:40px 20px;background:#98a5b2;color:white;border-radius:20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;}
+.footer h4{margin-bottom:12px;}
+.footer p,.footer a{color:black;;text-decoration:none;font-size:14px;margin-bottom:6px;}
+.footer a:hover{text-decoration:underline;color:#00aaff;}
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-left">
+    <h1>Premium Accessories</h1>
+    <p>Straps, boxes & smartwatches — all premium quality. Smooth shopping, wishlist & cart integrated.</p>
+  </div>
+  <div class="hero-right"><img src="box.jpg" alt="hero"></div>
+</div>
+
+<!-- TABS -->
+<div class="tabs" id="topTabs">
+  <div class="tab active" data-tab="all" onclick="selectTab('all')">All</div>
+  <div class="tab" data-tab="men" onclick="selectTab('men')">Men</div>
+  <div class="tab" data-tab="women" onclick="selectTab('women')">Women</div>
+  <div class="tab" data-tab="smartwatch" onclick="selectTab('smartwatch')">Smartwatch</div>
+</div>
+
+<div class="container">
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <h4>Brands</h4>
+  <div id="brandList"></div>
+  <div style="margin-top:12px">
+    <input id="minPrice" type="number" placeholder="Min price" style="width:100%;padding:8px;border-radius:8px;margin-bottom:6px;">
+    <input id="maxPrice" type="number" placeholder="Max price" style="width:100%;padding:8px;border-radius:8px;">
+    <button class="tab" onclick="applyFilters()">Apply</button>
+    <button class="tab" style="background:transparent" onclick="resetFilters()">Reset</button>
+  </div>
+</aside>
+
+<!-- PRODUCTS -->
+<main>
+  <div id="productsWrap">
+    <div class="grid" id="productGrid"></div>
+  </div>
+</main>
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal" onclick="closeModalOnClick(event)">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <button class="exit" onclick="closeModal()">✕</button>
+    <div class="modal-left"><img id="modalImg"></div>
+    <div class="modal-right">
+      <div class="badge" id="modalCategory"></div>
+      <h2 id="modalTitle"></h2>
+      <div class="smallmeta" id="modalBrand"></div>
+      <div style="margin-top:8px;font-size:20px;font-weight:800" id="modalPrice"></div>
+      <div class="smallmeta" id="modalStock"></div>
+      <p id="modalDesc" style="margin-top:12px;color:var(--muted)"></p>
+      <div class="actions">
+        <button class="btn add" onclick="addToCartCurrent()">Add to Cart</button>
+        <button class="btn buy" onclick="buyNowCurrent()">Buy Now</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div>
+    <h4>Precious Time</h4>
+    <p>Premium watches & accessories for all.</p>
+    <p>Phone: 9841554585</p>
+    <p>Email: hariprasadhp502@gmail.com</p>
+  </div>
+  <div>
+    <h4>Quick Links</h4>
+    <a href="#">Home</a><br>
+    <a href="#">Men's Watches</a><br>
+    <a href="#">Women's Watches</a><br>
+    <a href="#">Smartwatch</a>
+  </div>
+  <div>
+    <h4>Brands</h4>
+    <p>Titan, Casio, Fossil, Fastrack, Apple, Fire-Boltt, Samsung, Noise</p>
+  </div>
+  <div>
+    <h4>Follow Us</h4>
+    <a href="#">Instagram</a><br>
+    <a href="#">Facebook</a><br>
+    <a href="#">Twitter</a><br>
+    <a href="#">LinkedIn</a>
+  </div>
+</div>
+
+<script>
+// ====== PRODUCTS ======
+const products=[
+{id:1,name:"Classic Leather Strap",brand:"Titan",category:"men",color:"Brown",stock:12,price:899,img:"menstrap1.jpg",desc:"Premium genuine leather strap."},
+{id:2,name:"Metal Mesh Strap",brand:"Fossil",category:"men",color:"Silver",stock:8,price:999,img:"menstrap2.jpg",desc:"Stainless steel mesh strap."},
+{id:3,name:"Sport Rubber Strap",brand:"Casio",category:"men",color:"Black",stock:21,price:799,img:"menstrap.jpg",desc:"Durable rubber strap."},
+{id:4,name:"Premium Watch Box",brand:"Fastrack",category:"all",color:"Black",stock:4,price:1299,img:"box.jpg",desc:"Multi-slot premium storage."},
+{id:5,name:"Rose Gold Strap",brand:"Casio",category:"women",color:"Rose Gold",stock:14,price:699,img:"womenstrap.jpg",desc:"Elegant rose-gold plated strap."},
+{id:6,name:"Silver Classic Strap",brand:"Fire-Boltt",category:"women",color:"Silver",stock:6,price:749,img:"womenstrap1.jpg",desc:"Classic silver strap."},
+{id:7,name:"Limited Special Strap",brand:"Apple",category:"women",color:"Matte Black",stock:2,price:999,img:"somenstrap.jpg",desc:"Limited edition."},
+{id:8,name:"Smartwatch A1",brand:"Samsung",category:"smartwatch",color:"Gray",stock:18,price:5599,img:"menstrap1.jpg",desc:"Health tracking, calls & notifications."},
+{id:9,name:"Smartwatch Lite",brand:"Noise",category:"smartwatch",color:"Black",stock:25,price:3499,img:"womenstrap.jpg",desc:"Long battery, light weight, fitness modes."}];
+
+const brands = Array.from(new Set(products.map(p=>p.brand))).sort();
+let state={tab:'all',brandFilter:null,search:'',cart:JSON.parse(localStorage.getItem('pt_cart')||'[]'),currentProduct:null};
+
+// ====== INIT ======
+document.addEventListener('DOMContentLoaded',()=>{
+renderBrandList();
+renderProducts();
+});
+
+// ====== BRAND LIST ======
+function renderBrandList(){
+const list=document.getElementById('brandList'); list.innerHTML='';
+brands.forEach(b=>{
+  const el=document.createElement('div'); el.className='brand-item'; el.innerText=b;
+  el.addEventListener('click',()=>{
+    state.brandFilter=b; document.querySelectorAll('.brand-item').forEach(x=>x.classList.remove('active')); el.classList.add('active'); renderProducts();
+  });
+  list.appendChild(el);
+});
+}
+
+// ====== PRODUCTS ======
+function renderProducts(){
+const grid=document.getElementById('productGrid'); grid.innerHTML='';
+let list=products.slice();
+// filter tab
+if(state.tab==='men') list=list.filter(p=>p.category==='men'||p.category==='all');
+else if(state.tab==='women') list=list.filter(p=>p.category==='women'||p.category==='all');
+else if(state.tab==='smartwatch') list=list.filter(p=>p.category==='smartwatch'||p.category==='all');
+// filter brand
+if(state.brandFilter) list=list.filter(p=>p.brand===state.brandFilter);
+// render
+list.forEach(p=>{
+const card=document.createElement('div'); card.className='card'; card.addEventListener('click',()=>openModalWith(p.id));
+const heart=document.createElement('div'); heart.className='heart'; heart.innerText='♡';
+heart.addEventListener('click',e=>{ e.stopPropagation(); });
+const img=document.createElement('img'); img.src=p.img;
+const h3=document.createElement('h3'); h3.innerText=p.name;
+const meta=document.createElement('div'); meta.className='meta';
+const price=document.createElement('div'); price.className='price'; price.innerText=`₹${p.price}`;
+const stock=document.createElement('div'); stock.className='stock'; stock.innerText=p.stock>0?`${p.stock} in stock`:'Out of stock';
+meta.appendChild(price); meta.appendChild(stock);
+card.appendChild(heart); card.appendChild(img); card.appendChild(h3); card.appendChild(meta);
+grid.appendChild(card);
+});
+}
+
+// ====== TABS ======
+function selectTab(tab){ state.tab=tab; document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); document.querySelector(`.tab[data-tab="${tab}"]`).classList.add('active'); renderProducts(); }
+
+// ====== MODAL ======
+function openModalWith(id){
+const p=products.find(x=>x.id===id); if(!p) return; state.currentProduct=p;
+document.getElementById('modalImg').src=p.img;
+document.getElementById('modalTitle').innerText=p.name;
+document.getElementById('modalBrand').innerText=`${p.brand} • ${p.color}`;
+document.getElementById('modalPrice').innerText=`₹${p.price}`;
+document.getElementById('modalStock').innerText=p.stock>0?`In stock: ${p.stock}`:'Out of stock';
+document.getElementById('modalDesc').innerText=p.desc;
+document.getElementById('modalCategory').innerText=p.category.toUpperCase();
+document.getElementById('modal').classList.add('active');
+}
+function closeModal(){ document.getElementById('modal').classList.remove('active'); state.currentProduct=null; }
+function closeModalOnClick(e){ if(e.target.id==='modal') closeModal(); }
+
+// ====== CART / BUY ======
+function addToCartCurrent(){
+if(!state.currentProduct) return;
+const p=state.currentProduct;
+state.cart.push({...p, qty:1});
+localStorage.setItem('pt_cart',JSON.stringify(state.cart));
+alert(p.name+' added to cart.'); 
+window.location.href="cartsaved";
+}
+function buyNowCurrent(){ addToCartCurrent(); window.location.href="address"; }
+</script>
+</div>
+</body>
+</html>

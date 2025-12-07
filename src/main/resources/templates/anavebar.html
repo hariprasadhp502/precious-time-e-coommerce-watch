@@ -1,0 +1,278 @@
+<div th:fragment="navbar">
+
+<style>
+    body { margin:0; font-family:'Poppins',sans-serif; }
+
+    /* ------------------- NAVBAR WRAPPER ---------------------- */
+    .nav-wrapper {
+        background: rgba(15, 23, 42, 0.92);
+        backdrop-filter: blur(14px);
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        position: sticky;
+        top:0;
+        z-index: 999;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.35);
+    }
+
+    /* ------------------- TOP NAV ---------------------- */
+    nav {
+        padding: 18px 40px 10px;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    /* -------- Premium Gray Logo -------- */
+    .logo {
+        display:flex;
+        align-items:center;
+        gap:14px;
+        font-size:28px;
+        font-weight:700;
+        color:#e5e5e5;
+        letter-spacing:1px;
+    }
+    .logo .symbol {
+        width:48px;
+        height:48px;
+        border-radius:12px;
+        background: linear-gradient(135deg, #4b5563, #9ca3af); /* Premium Gray */
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+        border:1px solid rgba(255,255,255,0.10);
+    }
+    .logo svg path { stroke:#ffffff; }
+
+    .nav-links {
+        display:flex;
+        align-items:center;
+        gap:25px;
+    }
+
+    .nav-links a {
+        color:white;
+        font-weight:500;
+        text-decoration:none;
+        padding:6px 10px;
+        transition: all 0.3s ease;
+        font-size:15px;
+    }
+
+    .nav-links a:hover {
+        color:#6ee7ff;
+        transform:translateY(-2px);
+        text-shadow:0 0 12px #6ee7ff;
+    }
+
+    .icon {
+        cursor:pointer;
+        font-size:20px;
+        background:linear-gradient(135deg,#6ee7ff,#0f172a);
+        border-radius:50%;
+        width:42px;
+        height:42px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        transition: all 0.25s ease;
+        box-shadow:0 4px 12px rgba(14,165,164,0.4);
+        color:white;
+    }
+
+    .icon:hover {
+        transform: scale(1.1);
+        box-shadow:0 0 14px rgba(14,200,200,0.9);
+    }
+
+    /* ------------------ PREMIUM SEARCHBAR ------------------- */
+    .searchbar-box {
+        padding: 10px 40px 16px;
+        background: rgba(15,23,42,0.92);
+        border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .nav-search {
+        width:100%;
+        max-width:920px;
+        margin:auto;
+        display:flex;
+        align-items:center;
+        background: rgba(255,255,255,0.08);
+        border:1px solid rgba(255,255,255,0.10);
+        border-radius:40px;
+        padding: 6px 12px;
+        backdrop-filter: blur(8px);
+        box-shadow:0 4px 12px rgba(0,0,0,0.25);
+    }
+
+    .nav-search input {
+        width:100%;
+        padding:12px 16px;
+        background:transparent;
+        border:none;
+        color:white;
+        font-size:15px;
+        outline:none;
+    }
+
+    .nav-search input::placeholder {
+        color:rgba(255,255,255,0.6);
+    }
+
+    .search-btn {
+        width:50px;
+        height:42px;
+        border-radius:50%;
+        background:linear-gradient(135deg,#6ee7ff,#0f172a);
+        color:white;
+        border:none;
+        font-size:18px;
+        cursor:pointer;
+        box-shadow:0 0 12px rgba(14,165,164,0.4);
+    }
+
+</style>
+
+<div class="nav-wrapper">
+
+<!-- ---------------- TOP NAV ---------------- -->
+<nav>
+    <div class="logo">
+        <div class="symbol">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="1.4" opacity="0.5"/>
+                <path d="M12 7V12L16 14" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+        </div>
+        Precious Time
+    </div>
+
+    <div class="nav-links">
+        <a th:href="@{/index}">Home</a>
+        <a th:href="@{/men}">Men</a>
+        <a th:href="@{/women}">Women</a>
+        <a th:href="@{/collection}">Collection</a>
+        <a th:href="@{/anew}">Accessories</a>
+    </div>
+
+    <div style="display:flex; gap:14px; align-items:center;">
+        <div class="icon" th:onclick="'window.location.href=\'' + @{/login} + '\';'">👤</div>
+
+        <div class="icon"
+             th:onclick="'window.location.href=\'' + @{/cartsaved} + '\';'"
+             style="position:relative;">
+            🛒
+            <span id="cart-count" style="
+                position:absolute; top:-6px; right:-6px;
+                background:#ef4444; color:white;
+                padding:2px 6px; border-radius:50%; font-size:12px;">0</span>
+        </div>
+    </div>
+</nav>
+
+<!-- ---------------- SEARCHBAR BELOW MENU ---------------- -->
+<div class="searchbar-box">
+    <div class="nav-search">
+        <input id="global-search" type="search" placeholder="Search watches, brand or price...">
+        <button class="search-btn" onclick="performSearch()">🔍</button>
+    </div>
+</div>
+
+</div>
+
+<script>
+function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    document.getElementById("cart-count").innerText = cart.length;
+}
+updateCartCount();
+
+function performSearch(){
+    const q = document.getElementById('global-search').value.trim();
+    if(!q) return;
+    filterProducts(q);
+}
+
+function filterProducts(q){
+    q = q.toLowerCase();
+    const products = document.querySelectorAll('.product-card, .item, .watch-box');
+    products.forEach(p=>{
+        const text = (p.innerText || '').toLowerCase();
+        p.style.display = text.includes(q) ? 'block' : 'none';
+    });
+}
+
+document.getElementById('global-search').addEventListener('input', function(){
+    const v = this.value.trim();
+    const products = document.querySelectorAll('.product-card, .item, .watch-box');
+    if(v === ""){
+        products.forEach(p=>p.style.display="");
+        return;
+    }
+    filterProducts(v);
+});
+
+
+function performSearch(){
+    const query = document.getElementById('global-search').value.trim().toLowerCase();
+    if(!query) return;
+
+    // Check which page we are on
+    const currentPage = window.location.pathname.split('/').pop(); // e.g., men.html
+    const targetPages = [
+        {page:'men', selector:'.product-card'},
+        {page:'women', selector:'.product-card'},
+        {page:'collection', selector:'.item, .watch-box'}
+    ];
+
+    // If current page has the product, filter directly
+    const matchedPage = targetPages.find(p=>currentPage.includes(p.page));
+    if(matchedPage){
+        filterProducts(query, matchedPage.selector);
+    } else {
+        // Otherwise, go to the correct page (simple logic: men.html)
+        // Here, you can implement smarter logic later
+        window.location.href = '/men?search=' + encodeURIComponent(query);
+    }
+}
+
+function filterProducts(q, selector='.product-card, .item, .watch-box'){
+    const products = document.querySelectorAll(selector);
+    let found = false;
+    products.forEach(p=>{
+        const text = (p.innerText || '').toLowerCase();
+        if(text.includes(q)){
+            p.style.display = 'block';
+            if(!found){ 
+                // Scroll to first matching product
+                p.scrollIntoView({behavior:'smooth', block:'center'});
+                found = true;
+            }
+        } else {
+            p.style.display = 'none';
+        }
+    });
+
+    // If nothing found, you can show a message
+    if(!found){
+        console.log('No matching products found');
+    }
+}
+
+// Live input filtering
+document.getElementById('global-search').addEventListener('input', function(){
+    const v = this.value.trim().toLowerCase();
+    const products = document.querySelectorAll('.product-card, .item, .watch-box');
+    if(v === ""){
+        products.forEach(p=>p.style.display="");
+        return;
+    }
+    filterProducts(v);
+});
+
+</script>
+
+</div>

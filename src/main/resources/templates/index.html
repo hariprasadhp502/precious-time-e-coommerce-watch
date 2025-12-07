@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Men's Watches — Precious Time</title>
+</head>
+
+<body>
+
+<!-- LOAD NAVBAR FROM anavebar.html -->
+<div th:replace="anavebar :: navbar"></div>
+
+
+<!-- -------------------- MEN PAGE CONTENT START -------------------- -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Precious Time — Home</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#fbfdfe;
+    --panel:#ffffff;
+    --text:#0f172a;
+    --muted:#6b7280;
+    --brand-1:#007a7a;
+    --brand-2:#009cab;
+    --glass: rgba(255,255,255,0.6);
+    --card-shadow: 0 10px 30px rgba(2,6,23,0.06);
+    --round: 14px;
+    --max-width:1200px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:'Poppins',sans-serif;
+    background:linear-gradient(180deg, #f8fbfc 0%, #eef6f7 100%);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none}
+
+  /* top small header (brand only) */
+  .topbar {
+    max-width:var(--max-width); margin:18px auto 0; padding:0 18px; display:flex; align-items:center; justify-content:flex-start; gap:12px;
+  }
+  .brand-logo {
+    width:48px;height:48px;border-radius:10px;
+    background:linear-gradient(135deg,var(--brand-1),var(--brand-2));
+    display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:18px;
+    box-shadow: 0 8px 20px rgba(0,122,122,0.12);
+  }
+  .brand-title { font-size:18px; font-weight:700; margin-left:4px; color:var(--text); }
+
+  /* full-bleed hero */
+  .hero-wrap {
+    width:100vw;
+    margin-left:calc(50% - 50vw); /* full-bleed technique */
+    display:block;
+    position:relative;
+    z-index:0;
+  }
+  .hero-slider { position:relative; width:100%; height:62vh; overflow:hidden; }
+  .hero-track { display:flex; width:500%; height:100%; margin:0; animation:hero-slide 24s infinite; }
+  .hero-slide { width:20%; position:relative; flex:0 0 20%; }
+  .hero-slide img { width:100%; height:62vh; object-fit:cover; display:block; filter:brightness(75%); }
+  .hero-caption {
+    position:absolute; left:6%; top:50%; transform:translateY(-50%);
+    color:white; font-size:clamp(20px,4vw,48px); font-weight:800; line-height:1.02; text-shadow:0 6px 30px rgba(0,0,0,0.45);
+    max-width:680px; z-index:2;
+  }
+  @keyframes hero-slide {
+    0%,30%{transform:translateX(0)}
+    25%,55%{transform:translateX(-20%)}
+    50%,80%{transform:translateX(-40%)}
+    75%,90%{transform:translateX(-60%)}
+    95%,100%{transform:translateX(-80%)}
+  }
+
+  /* main container */
+  .container { max-width:var(--max-width); margin:28px auto; padding:0 18px; }
+
+  .section { margin:40px 0; }
+  .section-head { display:flex; align-items:end; justify-content:space-between; gap:12px; margin-bottom:18px; }
+  .section-title { font-size:22px; font-weight:700; }
+  .section-sub { color:var(--muted); font-size:13px; margin-top:6px; }
+
+  /* product grid */
+  .product-grid { display:grid; gap:22px; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); align-items:start; }
+  .product-card {
+    background:var(--panel);
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow: var(--card-shadow);
+    transition:transform .18s ease, box-shadow .18s ease;
+    cursor:pointer;
+    display:flex; flex-direction:column; align-items:stretch;
+  }
+  .product-card:focus, .product-card:hover { transform:translateY(-6px); box-shadow:0 26px 50px rgba(2,6,23,0.08); outline:0; }
+  .thumb-wrap { display:flex; align-items:center; justify-content:center; height:220px; background:linear-gradient(180deg, rgba(250,250,250,1), rgba(245,247,248,1)); }
+  .product-thumb { max-width:92%; max-height:92%; object-fit:contain; display:block; border-radius:8px; }
+
+  .product-body { padding:12px 14px; display:flex; flex-direction:column; gap:6px; flex:1; }
+  .product-name { font-size:15px; font-weight:700; color:var(--text); }
+  .product-meta { color:var(--muted); font-size:13px; }
+  .product-row { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:auto; }
+  .price { color:var(--brand-1); font-weight:800; font-size:15px; }
+
+  .badge { display:inline-block;padding:6px 10px;border-radius:999px;font-weight:600;font-size:12px;color:white;background:linear-gradient(90deg,var(--brand-1),var(--brand-2)); box-shadow:0 6px 18px rgba(0,122,122,0.12); }
+
+  /* Floating cart button */
+  .cart-float {
+    position:fixed; right:18px; bottom:18px; z-index:5000; display:flex; gap:8px; align-items:center;
+  }
+  .cart-btn {
+    background:linear-gradient(90deg,var(--brand-1),var(--brand-2));
+    color:white; border:0; padding:12px 14px; border-radius:12px; font-weight:700; box-shadow:0 18px 40px rgba(2,6,23,0.12); cursor:pointer;
+  }
+  .cart-count {
+    background:white; color:var(--brand-1); padding:6px 8px; border-radius:999px; font-weight:800; box-shadow:0 8px 18px rgba(2,6,23,0.06);
+  }
+
+  /* modal */
+  .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:6000; justify-content:center; align-items:center; padding:18px; }
+  .modal[open] { display:flex; }
+  .modal-card { width:100%; max-width:980px; background:white; border-radius:12px; overflow:hidden; display:grid; grid-template-columns: 1fr 420px; gap:0; box-shadow:0 30px 90px rgba(2,6,23,0.45); }
+  .modal-left { min-height:360px; display:flex; align-items:center; justify-content:center; background:#fafafa; padding:18px; }
+  .modal-left img { width:100%; max-width:420px; height:auto; object-fit:contain; border-radius:8px; }
+  .modal-right { padding:20px 22px; }
+  .modal-title { font-size:20px; font-weight:800; margin-bottom:6px; }
+  .modal-sub { color:var(--muted); margin-bottom:12px; }
+  .modal-price { color:var(--brand-1); font-weight:800; font-size:20px; margin-bottom:8px; }
+  .specs { font-size:14px; color:var(--text); line-height:1.5; margin-bottom:12px }
+  .modal-actions { display:flex; gap:10px; margin-top:10px; }
+  .btn { padding:10px 12px; border-radius:10px; font-weight:700; border:0; cursor:pointer; }
+  .btn-ghost { background:transparent; border:1px solid rgba(0,0,0,0.08); color:var(--brand-1); }
+  .btn-primary { background:linear-gradient(90deg,var(--brand-1),var(--brand-2)); color:white; }
+
+  .modal-close { position:absolute; right:18px; top:18px; background:transparent; border:0; font-size:22px; cursor:pointer; color:var(--muted); }
+
+  /* small toast */
+  .toast {
+    position:fixed; left:50%; transform:translateX(-50%); bottom:84px; z-index:7000;
+    background:rgba(0,0,0,0.78); color:white; padding:10px 14px; border-radius:10px; font-weight:600; display:none;
+  }
+
+  
+
+  @media(max-width:980px){
+    .modal-card { grid-template-columns: 1fr; }
+    .hero-caption { left:5%; }
+  }
+  @media(max-width:520px){
+    .thumb-wrap { height:180px }
+    .hero-slider { height:42vh }
+    .hero-slide img { height:42vh }
+    .product-body { padding:10px; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- Top brand only (no navbar) -->
+  
+
+  <!-- HERO (full width) -->
+  <div class="hero-wrap" aria-hidden="false">
+    <div class="hero-slider" role="region" aria-label="Promotional hero">
+      <div class="hero-track" aria-hidden="true">
+        <div class="hero-slide"><img src="headimg.jpg" alt="Featured watch 1"></div>
+        <div class="hero-slide"><img src="headimg2.jpg" alt="Featured watch 2"></div>
+        <div class="hero-slide"><img src="headimg3.jpg" alt="Featured watch 3"></div>
+        <div class="hero-slide"><img src="headimg2.jpg" alt="Featured watch 4"></div>
+        <div class="hero-slide"><img src="headimg3.jpg" alt="Featured watch 5"></div>
+      </div>
+
+      <div class="hero-caption" role="heading" aria-level="1">
+        PRECIOUS TIME — Curated luxury watches
+        <div style="font-size:14px; font-weight:500; margin-top:8px; opacity:0.95">Conditioned & verified — buy with confidence</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <main class="container" role="main">
+    <!-- Home collection exact (you said keep same) but images clickable to open modal -->
+    <section class="section" aria-labelledby="home-collection-title">
+      <div class="section-head">
+        <div>
+          <div class="section-title" id="home-collection-title">Home collection</div>
+          <div class="section-sub">Selected handpicked watches — click any item to view details</div>
+        </div>
+      </div>
+
+      <div class="product-grid" id="featuredProducts">
+        <!-- offline original cards (unchanged content but interactive) -->
+        <div class="product-card" tabindex="0" data-name="CERRUTI 1881" data-price="2999" data-image="img2.jpg" data-brand="CERRUTI" data-model="FW23" data-desc="Elegant Italian design." data-stock="8" onclick="openModalFromFallback(this)">
+          <div class="thumb-wrap"><img class="product-thumb" src="img2.jpg" alt="CERRUTI 1881"></div>
+          <div class="product-body">
+            <div class="product-name">CERRUTI 1881</div>
+            <div class="product-meta">CERRUTI • FW23</div>
+            <div class="product-row">
+              <div class="price">₹2999</div>
+              <div class="badge">Classic</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="product-card" tabindex="0" data-name="Titan Neo" data-price="3499" data-image="img5.jpg" data-brand="Titan" data-model="Classic" data-desc="Stylish and timeless." data-stock="12" onclick="openModalFromFallback(this)">
+          <div class="thumb-wrap"><img class="product-thumb" src="img5.jpg" alt="Titan Neo"></div>
+          <div class="product-body">
+            <div class="product-name">Titan Neo</div>
+            <div class="product-meta">Titan • Classic</div>
+            <div class="product-row">
+              <div class="price">₹3499</div>
+              <div class="badge">Bestseller</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="product-card" tabindex="0" data-name="Fossil Chronograph" data-price="5999" data-image="img3.jpg" data-brand="Fossil" data-model="Sport" data-desc="Bold chronograph design." data-stock="5" onclick="openModalFromFallback(this)">
+          <div class="thumb-wrap"><img class="product-thumb" src="img3.jpg" alt="Fossil Chronograph"></div>
+          <div class="product-body">
+            <div class="product-name">Fossil Chronograph</div>
+            <div class="product-meta">Fossil • Sport</div>
+            <div class="product-row">
+              <div class="price">₹5999</div>
+              <div class="badge">Sport</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured watches loaded from backend -->
+    <section class="section" aria-labelledby="featured-title">
+      <div class="section-head">
+        <div>
+          <div class="section-title" id="featured-title">Featured WATCHES</div>
+          <div class="section-sub">Products marked <strong>"home"</strong> in admin — loaded from backend</div>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <button class="btn btn-ghost" onclick="fetchFeaturedFromBackend()">Refresh</button>
+        </div>
+      </div>
+
+      <div class="product-grid" id="homeProducts">
+        <!-- JS will populate here or fallback offline -->
+      </div>
+    </section>
+
+    <footer class="site-footer" role="contentinfo">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    
+  
+<!-- ---------- PREMIUM FOOTER ---------- -->
+<footer style="background: linear-gradient(180deg,var(--brand-1), #006e6e); color: #fff; padding: 60px 50px; font-family: 'Poppins', sans-serif;">
+   
+  <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 40px;">
+
+        <!-- ABOUT SECTION -->
+        <div style="flex: 1; min-width: 250px;">
+            <h3 style="font-size: 22px; margin-bottom: 15px; color: #e0f7ff;">Precious Time</h3>
+            <p style="font-size: 16px; color: #cce6ff; line-height: 1.8;">
+                Precious Time is your premium destination for exclusive watches, crafted for elegance and precision. We bring timeless quality and luxury to your fingertips.
+            </p>
+            <p style="margin-top: 20px; font-size: 16px;">
+                <strong>Contact:</strong> +91 9841554585<br>
+                <strong>Email:</strong> hariprasadhp502@gmail.com
+            </p>
+        </div>
+
+        <!-- CUSTOMER SERVICE -->
+        <div style="flex: 1; min-width: 200px;">
+            <h3 style="font-size: 20px; margin-bottom: 15px; color: #e0f7ff;">Customer Service</h3>
+            <ul style="list-style:none; line-height:2;">
+                <li><a href="#" style="color:#cce6ff; text-decoration:none;">Help & FAQs</a></li>
+                <li><a href="#" style="color:#cce6ff; text-decoration:none;">Shipping & Delivery</a></li>
+                <li><a href="#" style="color:#cce6ff; text-decoration:none;">Returns & Exchanges</a></li>
+                <li><a href="#" style="color:#cce6ff; text-decoration:none;">Track Order</a></li>
+            </ul>
+        </div>
+
+        <!-- QUICK LINKS -->
+        <div style="flex: 1; min-width: 200px;">
+            <h3 style="font-size: 20px; margin-bottom: 15px; color: #e0f7ff;">Quick Links</h3>
+            <ul style="list-style:none; line-height:2;">
+                <li><a href="#" style="color:#cce6ff; text-decoration:none;">Men's Collection</a></li>
+                <li><a href="#" style="color:#cce6ff; text-decoration:none;">Women's Collection</a></li>
+                <li><a href="#" style="color:#cce6ff; text-decoration:none;">New Arrivals</a></li>
+                <li><a href="#" style="color:#cce6ff; text-decoration:none;">Best Sellers</a></li>
+            </ul>
+        </div>
+
+        <!-- NEWSLETTER & SOCIAL -->
+        <div style="flex: 1; min-width: 250px;">
+            <h3 style="font-size: 20px; margin-bottom: 15px; color: #e0f7ff;">Newsletter</h3>
+            <p style="font-size:16px; color:#cce6ff; line-height:1.8;">Subscribe to get exclusive updates and offers.</p>
+            <form style="margin-top:15px;">
+                <input type="email" placeholder="Enter your email" style="padding:10px; border-radius:6px; border:none; width:70%; margin-bottom:10px;">
+                <button type="submit" style="padding:10px 20px; border:none; border-radius:6px; background:#e0f7ff; color:#004080; font-weight:600; cursor:pointer;">Subscribe</button>
+            </form>
+            <div style="margin-top:20px;">
+                <span style="font-size:18px; color:#cce6ff; margin-right:10px;">Follow us:</span>
+                <a href="#" style="color:#cce6ff; text-decoration:none; font-size:20px; margin-right:10px;">&#xf09a;</a> <!-- Facebook -->
+                <a href="#" style="color:#cce6ff; text-decoration:none; font-size:20px; margin-right:10px;">&#xf099;</a> <!-- Twitter -->
+                <a href="#" style="color:#cce6ff; text-decoration:none; font-size:20px; margin-right:10px;">&#xf16d;</a> <!-- Instagram -->
+                <a href="#" style="color:#cce6ff; text-decoration:none; font-size:20px;">&#xf09b;</a> <!-- YouTube -->
+            </div>
+        </div>
+
+    </div>
+
+    <hr style="margin:40px 0; border-color: rgba(255,255,255,0.3);">
+
+    <p style="text-align:center; font-size:16px; color:#cce6ff;">&copy; 2025 Precious Time. All Rights Reserved.</p>
+</footer>
+</main>
+
+  <!-- Modal -->
+  <div id="productModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-card" role="document" aria-labelledby="modal-title">
+      <button class="modal-close" aria-label="Close" onclick="closeModal()">✕</button>
+      <div class="modal-left">
+        <img id="modal-img" src="" alt="product image">
+      </div>
+      <div class="modal-right">
+        <div class="modal-title" id="modal-title">Product Name</div>
+        <div class="modal-sub" id="modal-brand">Brand • Model</div>
+        <div class="modal-price" id="modal-price">₹0</div>
+        <div class="specs" id="modal-details">Description</div>
+
+        <div style="display:flex; gap:12px; align-items:center;">
+          <button class="btn btn-ghost" onclick="addToCartModalProduct()">Add to cart</button>
+          <button class="btn btn-primary" onclick="buyNow()">Buy now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- floating cart -->
+  <div class="cart-float" aria-hidden="false">
+    <div class="cart-count" id="cartCount">0</div>
+    <button class="cart-btn" onclick="openCart()">Cart</button>
+  </div>
+
+  <!-- toast -->
+  <div class="toast" id="toast">Added to cart</div>
+
+<script>
+
+  function buyNow() {
+    window.location.href = "/address";
+}
+
+  // API endpoint
+  const API = "http://localhost:8081/admin/products";
+
+  // state
+  window.cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  window.activeList = [];
+  window.currentIndex = 0;
+
+  // util
+  function imageUrl(path){
+    if(!path) return '';
+    if(path.startsWith('http')) return path;
+    if(path.startsWith('/')) return "http://localhost:8081" + path;
+    return "http://localhost:8081/" + path;
+  }
+  function formatPrice(v){ return (v === undefined || v === null) ? '0' : Number(v).toLocaleString('en-IN'); }
+  function escapeHtml(s){ return String(s || '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+  // set cart count
+  function refreshCartUI(){
+    document.getElementById('cartCount').innerText = window.cart.length || 0;
+    localStorage.setItem('cart', JSON.stringify(window.cart));
+  }
+  refreshCartUI();
+
+  // Render list into #homeProducts (Featured WATCHES)
+  function renderHomeProducts(list){
+    const container = document.getElementById('homeProducts');
+    container.innerHTML = '';
+
+    if(!list || list.length === 0){
+      // no backend items -> show nothing (user already has offline in featuredProducts)
+      const msg = document.createElement('div');
+      msg.style.opacity = '.8';
+      msg.innerText = 'No featured items from backend — showing offline collection above.';
+      container.appendChild(msg);
+      return;
+    }
+
+    list.forEach((p,i) => {
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      card.tabIndex = 0;
+      card.dataset.index = i;
+      card.onclick = () => openModalFromList(list,i);
+      card.onkeydown = (e) => { if(e.key === 'Enter') openModalFromList(list,i); };
+
+      const src = (p.imagePath && (p.imagePath.startsWith('img') || p.imagePath.startsWith('./'))) ? p.imagePath : imageUrl(p.imagePath || p.imageUrl || '');
+      card.innerHTML = `
+        <div class="thumb-wrap"><img class="product-thumb" src="${src}" alt="${escapeHtml(p.name)}"></div>
+        <div class="product-body">
+          <div class="product-name">${escapeHtml(p.name)}</div>
+          <div class="product-meta">${escapeHtml(p.brand || '')}${p.model ? ' • ' + escapeHtml(p.model) : ''}</div>
+          <div class="product-row">
+            <div class="price">₹${formatPrice(p.price)}</div>
+            <div class="badge">${p.category ? escapeHtml(p.category) : 'Listing'}</div>
+          </div>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  // fetch backend and filter category contains 'home'
+  async function fetchFeaturedFromBackend(){
+    try{
+      const resp = await fetch(API, {cache: 'no-store'});
+      if(!resp.ok) throw new Error('network');
+      const data = await resp.json();
+      const filtered = (Array.isArray(data) ? data : []).filter(p => p.category && p.category.toString().toLowerCase().includes('home'));
+      renderHomeProducts(normalizeProducts(filtered));
+    }catch(err){
+      console.warn('Failed to fetch backend products', err);
+      renderHomeProducts([]); // show message fallback
+    }
+  }
+
+  // normalize backend products
+  function normalizeProducts(list){
+    return list.map(p => ({
+      id: p.id || p._id || null,
+      name: p.name || 'Untitled',
+      brand: p.brand || '',
+      model: p.model || '',
+      price: (p.price !== undefined ? p.price : (p.currentPrice || 0)),
+      imagePath: p.imagePath || p.imageUrl || '',
+      category: p.category || '',
+      colors: (p.color ? [p.color] : (p.colors || [])),
+      stock: p.stock || 0,
+      description: p.description || p.details || ''
+    }));
+  }
+
+  // open modal from backend list
+  function openModalFromList(list, index){
+    window.activeList = list;
+    window.currentIndex = index;
+    updateModal();
+    const modal = document.getElementById('productModal');
+    modal.setAttribute('open','');
+    modal.style.display = 'flex';
+    modal.setAttribute('aria-hidden','false');
+    // trap focus if you want (simple)
+    document.body.style.overflow = 'hidden';
+  }
+
+  // open modal from offline fallback (element dataset)
+  function openModalFromFallback(el){
+    const p = {
+      name: el.dataset.name,
+      brand: el.dataset.brand,
+      model: el.dataset.model,
+      price: Number(el.dataset.price || 0),
+      imagePath: el.dataset.image,
+      stock: Number(el.dataset.stock||0),
+      description: el.dataset.desc || ''
+    };
+    window.activeList = [p];
+    window.currentIndex = 0;
+    updateModal();
+    const modal = document.getElementById('productModal');
+    modal.setAttribute('open','');
+    modal.style.display = 'flex';
+    modal.setAttribute('aria-hidden','false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function updateModal(){
+    const p = window.activeList[window.currentIndex];
+    if(!p) return;
+    const src = (p.imagePath && (p.imagePath.startsWith('img') || p.imagePath.startsWith('./'))) ? p.imagePath : imageUrl(p.imagePath || p.imageUrl || '');
+    document.getElementById('modal-img').src = src || 'img-placeholder.png';
+    document.getElementById('modal-title').innerText = p.name;
+    document.getElementById('modal-brand').innerText = (p.brand || '') + (p.model ? ' • ' + p.model : '');
+    document.getElementById('modal-price').innerText = '₹' + formatPrice(p.price);
+    document.getElementById('modal-details').innerHTML =
+      `<div><strong>Colors:</strong> ${p.colors && p.colors.length ? escapeHtml(p.colors.join(', ')) : 'N/A'}</div>
+       <div style="margin-top:8px"><strong>Stock:</strong> ${escapeHtml(p.stock || 0)}</div>
+       <div style="margin-top:8px"><strong>Description:</strong> ${escapeHtml(p.description || 'No description')}</div>`;
+  }
+
+  function closeModal(){
+    const modal = document.getElementById('productModal');
+    modal.removeAttribute('open');
+    modal.style.display = 'none';
+    modal.setAttribute('aria-hidden','true');
+    document.body.style.overflow = '';
+  }
+
+  // cart functions
+  function addToCartModalProduct(){
+    const p = window.activeList[window.currentIndex];
+    if(!p) return;
+    // shallow clone before pushing
+    const item = { id: p.id || Math.random().toString(36).slice(2,9), name: p.name, price: p.price, qty:1, img: p.imagePath || p.imageUrl || '' };
+    // if exists increment qty
+    const existing = window.cart.find(x => x.name === item.name && x.price === item.price);
+    if(existing){ existing.qty = (existing.qty || 1) + 1; }
+    else window.cart.push(item);
+    refreshCartUI();
+    showToast('Added to cart');
+  }
+
+ async function buyNow() {
+
+    // 1) CHECK SESSION FROM BACKEND
+    try {
+        const res = await fetch("http://localhost:8081/api/user/check", {
+            method: "GET",
+            credentials: "include"
+        });
+
+        const data = await res.json();
+
+        // 2) IF NOT LOGGED IN → REDIRECT TO LOGIN PAGE
+        if (!data.loggedIn) {
+            // Store where user wanted to go
+            sessionStorage.setItem("afterLoginRedirect", "/address");
+            window.location.href = "/login";   // your login page
+            return;
+        }
+
+        // 3) IF LOGGED IN → CONTINUE BUY NOW
+        let confirmMsg = confirm("Welcome to purchasing page. Place order?");
+        if (confirmMsg) {
+            window.location.href = "/address";
+        }
+
+    } catch (err) {
+        console.error("Login check failed", err);
+        window.location.href = "/login";
+    }
+}
+
+
+    
+  // open cart (quick view)
+  function openCart(){
+    // simple quick cart UI using prompt for demo (replace with real cart page)
+    if(window.cart.length === 0){ alert('Cart is empty'); return; }
+    let summary = 'Cart — items:\\n';
+    window.cart.forEach((c,i) => summary += `${i+1}. ${c.name} x${c.qty} — ₹${formatPrice(c.price)}\\n`);
+    summary += '\\nTotal: ₹' + formatPrice(window.cart.reduce((s,x)=> s + (Number(x.price||0) * (x.qty||1)),0));
+    if(confirm(summary + '\\n\\nGo to checkout?')) {
+      if(typeof loadContent === 'function') loadContent('address'); else alert('Implement checkout flow (address.html)');
+    }
+  }
+
+  // toast
+  let toastTimer;
+  function showToast(msg, ms=1600){
+    const t = document.getElementById('toast');
+    t.innerText = msg;
+    t.style.display = 'block';
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=> t.style.display = 'none', ms);
+  }
+
+  // initial load
+  fetchFeaturedFromBackend();
+
+  // modal keyboard & overlay behavior
+  document.getElementById('productModal').addEventListener('click', (ev) => {
+    if(ev.target === document.getElementById('productModal')) closeModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape') closeModal();
+  });
+
+  // expose a small function for external use (optional)
+  window.addToCart = addToCartModalProduct;
+  window.buyNow = buyNow;
+
+</script>
+</body>
+</html>

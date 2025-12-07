@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>collection- Watches — Precious Time</title>
+
+
+<body>
+
+<!-- LOAD NAVBAR FROM anavebar.html -->
+<div th:replace="anavebar :: navbar"></div>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Precious Time — Collection</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    * { box-sizing: border-box; margin:0; padding:0; font-family:'Poppins', sans-serif;}
+    body { background: linear-gradient(to bottom, #e0f7ff, #f0f9ff); color:#333; }
+
+    h2.collection-title { text-align:center; font-size:36px; font-weight:700; color:#004080; margin:40px 0; }
+
+    .category-filter { text-align:center; margin-bottom:40px; }
+    .category-filter button {
+        padding:12px 25px; margin:0 10px; border:none;
+        background:#004080; color:#fff; border-radius:25px; cursor:pointer; font-weight:500;
+        transition:0.3s;
+    }
+    .category-filter button.active, .category-filter button:hover { background:#00aaff; }
+
+    .product-grid {
+        display:grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap:30px;
+        padding:0 50px 50px 50px;
+    }
+
+    .product-card {
+        background:#fff; border-radius:12px; overflow:hidden;
+        box-shadow:0 6px 18px rgba(0,0,0,0.1); cursor:pointer;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .product-card:hover { transform:translateY(-5px); box-shadow:0 12px 25px rgba(0,0,0,0.2);}
+    .product-card img { width:100%; display:block; border-bottom:1px solid #ddd; }
+    .product-info-card { padding:12px; text-align:center;}
+    .product-info-card h3 { font-size:20px; color:#004080; margin-bottom:5px;}
+    .product-info-card p { font-size:16px; color:#00aaff; font-weight:600; margin-bottom:5px; }
+
+    /* ---------- MODAL ---------- */
+    .modal {
+        display:none; position:fixed; z-index:9999; top:0; left:0;
+        width:100%; height:100%; background:rgba(0,0,0,0.7);
+        justify-content:center; align-items:center;
+        overflow:hidden;
+    }
+
+    .modal-content {
+        background:#f0f9ff; border-radius:15px;
+        max-width:900px; width:90%;
+        display:flex; gap:30px; padding:30px; position:relative;
+        flex-wrap:wrap;
+        box-shadow:0 12px 25px rgba(0,0,0,0.3);
+        animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn { from {opacity:0; transform:scale(0.9);} to {opacity:1; transform:scale(1);} }
+
+    .modal-content img { max-width:400px; border-radius:15px; flex:1; object-fit:cover; }
+    .modal-info { flex:1; display:flex; flex-direction:column; justify-content:center; gap:12px; }
+    .modal-info h2 { font-size:28px; color:#004080; }
+    .modal-info p { font-size:18px; color:#004080; }
+    .modal-info span { font-weight:600; color:#00aaff; }
+
+    .modal-info button {
+        padding:12px 25px; border:none; border-radius:8px; font-weight:500; cursor:pointer; transition:0.3s; margin-top:10px;
+    }
+    .add-cart { background:#004080; color:#fff; }
+    .add-cart:hover { background:#00aaff; }
+    .buy-now { background:#00aaff; color:#fff; }
+    .buy-now:hover { background:#0066cc; }
+
+    .close-modal {
+        position:absolute; top:15px; right:20px;
+        font-size:28px; font-weight:bold; cursor:pointer; color:#004080;
+    }
+
+    @media(max-width:768px){
+        .modal-content { flex-direction:column; align-items:center; text-align:center; }
+        .modal-content img { max-width:100%; }
+    }
+</style>
+</head>
+<body>
+
+
+    
+
+<h2 class="collection-title">Our Collection</h2>
+
+<div class="category-filter">
+    <button class="active" onclick="filterProducts('all')">All</button>
+    <button onclick="filterProducts('men')">Men</button>
+    <button onclick="filterProducts('women')">Women</button>
+</div>
+
+<div class="product-grid" id="productGrid"></div>
+
+<!-- Modal -->
+<div id="productModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <img id="modalImg" src="" alt="Product">
+        <div class="modal-info">
+            <h2 id="modalName"></h2>
+            <p>Brand: <span id="modalBrand"></span></p>
+            <p>Category: <span id="modalCategory"></span></p>
+            <p>Stock: <span id="modalStock"></span></p>
+            <p>Color: <span id="modalColor"></span></p>
+            <p>Price: <span id="modalPrice"></span></p>
+            <button class="add-cart" onclick="addToCart()">Add to Cart</button>
+            <button class="buy-now" onclick="buyNow()">Buy Now</button>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- ---------- PREMIUM FOOTER ---------- -->
+<footer style="background: linear-gradient(to right, #004080, #00aaff); color: #fff; padding: 60px 50px; font-family: 'Poppins', sans-serif;">
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 40px;">
+
+        <!-- ABOUT SECTION -->
+        <div style="flex: 1; min-width: 250px;">
+            <h3 style="font-size: 22px; margin-bottom: 15px; color: #e0f7ff;">Precious Time</h3>
+            <p style="font-size: 16px; color: #cce6ff; line-height: 1.8;">
+                Precious Time is your premium destination for exclusive watches, crafted for elegance and precision. We bring timeless quality and luxury to your fingertips.
+            </p>
+            <p style="margin-top: 20px; font-size: 16px;">
+                <strong>Contact:</strong> +91 9841554585<br>
+                <strong>Email:</strong> hariprasadhp502@gmail.com
+            </p>
+        </div>
+
+        <!-- CUSTOMER SERVICE -->
+        <div style="flex: 1; min-width: 200px;">
+            <h3 style="font-size: 20px; margin-bottom: 15px; color: #e0f7ff;">Customer Service</h3>
+            <ul style="list-style:none; line-height:2;">
+                <li><a href="#" style="color:#cce6ff; text-decoration:none;">Help & FAQs</a></li>
+                <li><a href="#" style="color:#cce6ff; text-decoration:none;">Shipping & Delivery</a></li>
+                <li><a href="#" style="color:#cce6ff; text-decoration:none;">Returns & Exchanges</a></li>
+                <li><a href="#" style="color:#cce6ff; text-decoration:none;">Track Order</a></li>
+            </ul>
+        </div>
+
+        <!-- QUICK LINKS -->
+        <div style="flex: 1; min-width: 200px;">
+            <h3 style="font-size: 20px; margin-bottom: 15px; color: #e0f7ff;">Quick Links</h3>
+            <ul style="list-style:none; line-height:2;">
+                <li><a href="#" style="color:#cce6ff; text-decoration:none;">Men's Collection</a></li>
+                <li><a href="#" style="color:#cce6ff; text-decoration:none;">Women's Collection</a></li>
+                <li><a href="#" style="color:#cce6ff; text-decoration:none;">New Arrivals</a></li>
+                <li><a href="#" style="color:#cce6ff; text-decoration:none;">Best Sellers</a></li>
+            </ul>
+        </div>
+
+        <!-- NEWSLETTER & SOCIAL -->
+        <div style="flex: 1; min-width: 250px;">
+            <h3 style="font-size: 20px; margin-bottom: 15px; color: #e0f7ff;">Newsletter</h3>
+            <p style="font-size:16px; color:#cce6ff; line-height:1.8;">Subscribe to get exclusive updates and offers.</p>
+            <form style="margin-top:15px;">
+                <input type="email" placeholder="Enter your email" style="padding:10px; border-radius:6px; border:none; width:70%; margin-bottom:10px;">
+                <button type="submit" style="padding:10px 20px; border:none; border-radius:6px; background:#e0f7ff; color:#004080; font-weight:600; cursor:pointer;">Subscribe</button>
+            </form>
+            <div style="margin-top:20px;">
+                <span style="font-size:18px; color:#cce6ff; margin-right:10px;">Follow us:</span>
+                <a href="#" style="color:#cce6ff; text-decoration:none; font-size:20px; margin-right:10px;">&#xf09a;</a> <!-- Facebook -->
+                <a href="#" style="color:#cce6ff; text-decoration:none; font-size:20px; margin-right:10px;">&#xf099;</a> <!-- Twitter -->
+                <a href="#" style="color:#cce6ff; text-decoration:none; font-size:20px; margin-right:10px;">&#xf16d;</a> <!-- Instagram -->
+                <a href="#" style="color:#cce6ff; text-decoration:none; font-size:20px;">&#xf09b;</a> <!-- YouTube -->
+            </div>
+        </div>
+
+    </div>
+
+    <hr style="margin:40px 0; border-color: rgba(255,255,255,0.3);">
+
+    <p style="text-align:center; font-size:16px; color:#cce6ff;">&copy; 2025 Precious Time. All Rights Reserved.</p>
+</footer>
+
+<script>
+const products = [
+    {name:"Men's Watch 1", brand:"Omega", price:"$120", img:"men1.jpg", category:"men", stock:12, color:"Black"},
+    {name:"Men's Watch 2", brand:"Rolex", price:"$150", img:"men2.jpg", category:"men", stock:8, color:"Silver"},
+    {name:"Men's Watch 3", brand:"Casio", price:"$180", img:"men3.jpg", category:"men", stock:20, color:"Brown"},
+    {name:"Men's Watch 4", brand:"Titan", price:"$200", img:"men4.jpg", category:"men", stock:5, color:"Blue"},
+    {name:"Men's Watch 5", brand:"Seiko", price:"$220", img:"men5.jpg", category:"men", stock:10, color:"Gray"},
+    {name:"Men's Watch 6", brand:"Fossil", price:"$250", img:"men6.jpg", category:"men", stock:15, color:"Gold"},
+    {name:"Men's Watch 7", brand:"Tissot", price:"$280", img:"men7.jpg", category:"men", stock:7, color:"Rose Gold"},
+    {name:"Women's Watch 1", brand:"Omega", price:"$130", img:"womenimg.jpg", category:"women", stock:12, color:"White"},
+    {name:"Women's Watch 2", brand:"Rolex", price:"$160", img:"womenimg2.jpg", category:"women", stock:8, color:"Silver"},
+    {name:"Women's Watch 3", brand:"Casio", price:"$190", img:"womenimg3.jpg", category:"women", stock:20, color:"Pink"},
+    {name:"Women's Watch 4", brand:"Titan", price:"$210", img:"womenimg5.jpg", category:"women", stock:5, color:"Blue"},
+    {name:"Women's Watch 5", brand:"Seiko", price:"$230", img:"womenimg5.jpg", category:"women", stock:10, color:"Purple"},
+    {name:"Women's Watch 6", brand:"Fossil", price:"$260", img:"womenimg6.jpg", category:"women", stock:15, color:"Gold"},
+    {name:"Women's Watch 7", brand:"Tissot", price:"$290", img:"womenimg7.jpg", category:"women", stock:7, color:"Rose Gold"}
+];
+
+const productGrid = document.getElementById('productGrid');
+const modal = document.getElementById('productModal');
+const modalImg = document.getElementById('modalImg');
+const modalName = document.getElementById('modalName');
+const modalBrand = document.getElementById('modalBrand');
+const modalCategory = document.getElementById('modalCategory');
+const modalStock = document.getElementById('modalStock');
+const modalColor = document.getElementById('modalColor');
+const modalPrice = document.getElementById('modalPrice');
+
+let selectedProduct = null;
+
+// ---------------- DISPLAY PRODUCTS ----------------
+function displayProducts(filteredProducts){
+    productGrid.innerHTML = '';
+    filteredProducts.forEach(product => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+            <img src="${product.img}" alt="${product.name}">
+            <div class="product-info-card">
+                <h3>${product.name}</h3>
+                <p>${product.price}</p>
+                <p>Brand: ${product.brand}</p>
+            </div>
+        `;
+        card.addEventListener('click', () => openModal(product));
+        productGrid.appendChild(card);
+    });
+}
+
+// ---------------- FILTER PRODUCTS ----------------
+function filterProducts(category, event){
+    const buttons = document.querySelectorAll('.category-filter button');
+    buttons.forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+
+    if(category === 'all') displayProducts(products);
+    else displayProducts(products.filter(p => p.category === category));
+}
+
+// ---------------- OPEN / CLOSE MODAL ----------------
+function openModal(product){
+    selectedProduct = product;
+    modal.style.display = 'flex';
+    modalImg.src = product.img;
+    modalName.textContent = product.name;
+    modalBrand.textContent = product.brand;
+    modalCategory.textContent = product.category;
+    modalStock.textContent = product.stock;
+    modalColor.textContent = product.color;
+    modalPrice.textContent = product.price;
+}
+
+function closeModal(){ modal.style.display = 'none'; }
+window.onclick = function(event){ if(event.target == modal) closeModal(); }
+
+// ---------------- LOGIN CHECK ----------------
+async function isUserLoggedIn() {
+    try {
+        const response = await fetch("/api/user/check", {
+            method: "GET",
+            credentials: "include"
+        });
+        const data = await response.json();
+        return data.loggedIn === true;
+    } catch(err){
+        console.error("Login check failed:", err);
+        return false;
+    }
+}
+
+// ---------------- ADD TO CART ----------------
+async function addToCart(){
+    if(!selectedProduct) return;
+
+    const loggedIn = await isUserLoggedIn();
+    if(!loggedIn){
+        alert("Please login to add items to your cart!");
+        document.getElementById("loginModal").style.display = "flex";
+        return;
+    }
+
+    let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+    // Push selected product
+    cart.push({
+        name: selectedProduct.name,
+        brand: selectedProduct.brand,
+        price: selectedProduct.price,
+        img: selectedProduct.img,
+        category: selectedProduct.category,
+        color: selectedProduct.color,
+        stock: selectedProduct.stock
+    });
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+    alert(selectedProduct.name + " added to cart!");
+}
+
+// ---------------- BUY NOW ----------------
+async function buyNow(){
+    if(!selectedProduct) return;
+
+    const loggedIn = await isUserLoggedIn();
+    if(!loggedIn){
+                
+
+        alert("Please login to continue your purchase!");
+        document.getElementById("loginModal").style.display = "flex";
+          window.location.href = "/login";
+        return;
+    }
+
+    try{
+        await fetch("/api/order/temp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+                name: selectedProduct.name,
+                brand: selectedProduct.brand,
+                price: selectedProduct.price,
+                img: selectedProduct.img
+            })
+        });
+        window.location.href = "address";
+    } catch(err){
+        console.error("BuyNow failed:", err);
+        alert("Unable to proceed. Try again.");
+    }
+}
+
+// ---------------- INITIAL DISPLAY ----------------
+displayProducts(products);
+</script>
+
+
+</body>
+</html>

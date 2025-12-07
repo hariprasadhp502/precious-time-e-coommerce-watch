@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Men's Watches — Precious Time</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg:#246d74;
+  --panel:#ffffff;
+  --text:#0f172a;
+  --muted:#6b7f80;
+  --brand-1:#0ea5a4;
+  --brand-2:#0c8c8c;
+  --card-shadow: 0 10px 30px rgba(2,6,23,0.06);
+  --max-width:1200px;
+
+  
+}
+
+*{box-sizing:border-box}
+
+html,body{height:100%}
+body{margin:0;font-family:'Poppins',sans-serif;background:linear-gradient(180deg,#f8fbfc 0%, #eef6f7 100%);color:var(--text);}
+.hero-wrap{width:100vw;margin-left:calc(50% - 50vw);position:relative;z-index:0;}
+.hero{width:100%;height:400px;background:url('mh1.jpg') center/cover no-repeat;display:flex;align-items:center;justify-content:center;position:relative;}
+.hero::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,0.28);}
+.hero h1{position:relative;color:#fff;font-size:28px;font-weight:700;padding:12px 20px;border-radius:10px;backdrop-filter:blur(4px);}
+.container{max-width:var(--max-width);margin:28px auto;padding:0 18px;}
+.section{margin:40px 0;}
+.section-title{font-size:22px;font-weight:700;text-align:center;width:100%;margin:0 auto 10px;}
+.section-title::after{content:"";width:80px;height:4px;background:var(--brand-1);display:block;margin:10px auto 0;border-radius:4px;}
+.top-row{display:flex;justify-content:center;gap:28px;flex-wrap:wrap;padding:8px 0 22px;}
+.top-card{width:300px;background:var(--panel);border-radius:14px;overflow:hidden;box-shadow:var(--card-shadow);cursor:pointer;transition:.28s;}
+.top-card:hover{transform:translateY(-6px);box-shadow:0 18px 36px rgba(2,6,23,0.08);}
+.top-thumb{width:100%;height:240px;object-fit:cover;display:block;}
+.top-card .info{padding:12px 16px;text-align:center;font-weight:700;}
+.product-grid{display:grid;gap:22px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));align-items:start;}
+.product-card{background:var(--panel);border-radius:12px;overflow:hidden;box-shadow:var(--card-shadow);transition:transform .18s ease;display:flex;flex-direction:column;}
+.product-card:hover{transform:translateY(-6px);box-shadow:0 26px 50px rgba(2,6,23,0.08);}
+.thumb-wrap{display:flex;align-items:center;justify-content:center;height:220px;background:linear-gradient(180deg,rgb(36,212,194),rgba(245,247,248,1));}
+.product-thumb{max-width:92%;max-height:92%;object-fit:contain;display:block;border-radius:8px;}
+.product-body{padding:12px 14px;display:flex;flex-direction:column;gap:8px;flex:1;}
+.product-name{font-size:15px;font-weight:700;color:var(--text);}
+.product-meta{color:var(--muted);font-size:13px;}
+.product-row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:auto;}
+.price{color:var(--brand-1);font-weight:800;font-size:15px;}
+.btn{padding:10px 12px;border-radius:10px;font-weight:700;border:0;cursor:pointer;}
+.btn-ghost{background:transparent;border:1px solid rgba(0,0,0,0.08);color:var(--brand-1);}
+.btn-primary{background:linear-gradient(90deg,var(--brand-1),var(--brand-2));color:white;}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:6000;justify-content:center;align-items:center;padding:20px;}
+.modal.open{display:flex;}
+.modal-card{width:100%;max-width:980px;background:var(--panel);border-radius:12px;overflow:hidden;display:grid;grid-template-columns:1fr 420px;box-shadow:0 30px 90px rgba(2,6,23,0.28);}
+.modal-left{min-height:360px;display:flex;align-items:center;justify-content:center;background:#fafafa;padding:18px;}
+.modal-left img{width:100%;max-width:420px;height:auto;object-fit:contain;border-radius:8px;}
+.modal-right{padding:22px;display:flex;flex-direction:column;gap:8px;}
+.modal-title{font-size:20px;font-weight:800;}
+.modal-sub{color:var(--muted);margin-bottom:8px;}
+.modal-price{color:var(--brand-1);font-weight:800;font-size:20px;margin-bottom:8px;}
+.modal-actions{display:flex;gap:10px;margin-top:10px;}
+.modal-close{position:absolute;right:20px;top:18px;background:transparent;border:0;font-size:26px;cursor:pointer;color:var(--muted);}
+.cart-float{position:fixed;right:18px;bottom:18px;z-index:5000;display:flex;gap:8px;align-items:center;}
+.cart-btn{background:linear-gradient(90deg,var(--brand-1),var(--brand-2));color:white;border:0;padding:12px 14px;border-radius:12px;font-weight:700;box-shadow:0 18px 40px rgba(2,6,23,0.12);cursor:pointer;}
+.cart-count{background:white;color:var(--brand-1);padding:6px 8px;border-radius:999px;font-weight:800;box-shadow:0 8px 18px rgba(2,6,23,0.06);}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:88px;z-index:7000;background:rgba(0,0,0,0.78);color:white;padding:10px 14px;border-radius:10px;font-weight:600;display:none;}
+footer.site-footer{margin-top:28px;background:linear-gradient(180deg,var(--brand-1),#006e6e);color:white;padding:26px 18px;border-radius:12px;max-width:var(--max-width);margin-left:auto;margin-right:auto;text-align:center;}
+@media(max-width:980px){.modal-card{grid-template-columns:1fr;}.top-card{width:85%;}}
+@media(max-width:520px){.hero{height:150px}.top-card{width:95%;}.thumb-wrap{height:180px}}
+
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<div th:replace="anavebar :: navbar"></div>
+
+<!-- HERO -->
+<div class="hero-wrap">
+  <div class="hero"><h1>PRECIOUS TIME — Curated watches</h1></div>
+</div>
+
+<main class="container">
+
+  <!-- Featured Men -->
+  <!-- Featured Men -->
+<section class="section">
+  <h2 class="section-title">Featured Men's Watches</h2>
+  <div class="top-row">
+    <div class="top-card" data-name="Rolex Submariner" data-brand="Rolex" data-desc="Luxury classic style" data-price="12000" data-image="m1.jpg" onclick="featuredBuyCheck(this)">
+      <img class="top-thumb" src="m1.jpg" alt="Rolex Submariner">
+      <div class="info">Rolex Submariner</div>
+    </div>
+    <div class="top-card" data-name="Omega Seamaster" data-brand="Omega" data-desc="Elegant professional look" data-price="8500" data-image="m2.jpg" onclick="featuredBuyCheck(this)">
+      <img class="top-thumb" src="m2.jpg" alt="Omega Seamaster">
+      <div class="info">Omega Seamaster</div>
+    </div>
+    <div class="top-card" data-name="Casio G-Shock" data-brand="Casio" data-desc="Sporty and durable" data-price="250" data-image="m3.jpg" onclick="featuredBuyCheck(this)">
+      <img class="top-thumb" src="m3.jpg" alt="Casio G-Shock">
+      <div class="info">Casio G-Shock</div>
+    </div>
+  </div>
+</section>
+
+  <!-- All Men's Watches -->
+  <section class="section">
+    <h2 class="section-title">All Men's Watches</h2>
+    <div style="display:flex; justify-content:flex-end; gap:10px; margin-bottom:8px;">
+      <button class="btn btn-ghost" onclick="loadProducts()">Refresh</button>
+    </div>
+    <div class="product-grid" id="productContainer"></div>
+  </section>
+
+  <footer class="site-footer">
+    <div style="font-weight:700; margin-bottom:8px">PRECIOUS TIME</div>
+    <div style="opacity:0.92; margin-bottom:8px">Luxury. Precision. Elegance — Crafted for You.</div>
+    <div style="font-size:13px; opacity:0.95">© 2025 Precious Time. All Rights Reserved.</div>
+  </footer>
+</main>
+
+<!-- MODAL -->
+<div id="productModal" class="modal">
+  <div class="modal-card">
+    <button class="modal-close" title="Close" onclick="closeModal()">✕</button>
+    <div class="modal-left">
+      <img id="modal-img" src="" alt="product image">
+    </div>
+    <div class="modal-right">
+      <div class="modal-title" id="modalTitle"></div>
+      <div class="modal-sub" id="modalBrand"></div>
+      <div class="modal-price" id="modalPrice"></div>
+      <div class="specs" id="modalDetails"></div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="addToCartModalProduct()">Add to cart</button>
+        <button class="btn btn-primary" onclick="buyNow()">Buy now</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CART & TOAST -->
+<div class="cart-float">
+  <div class="cart-count" id="cartCount">0</div>
+  <button class="cart-btn" onclick="openCart()">Cart</button>
+</div>
+<div id="toast" class="toast">Added to cart</div>
+
+<script>
+const API = "http://localhost:8081/admin/products";
+
+window.cart = JSON.parse(localStorage.getItem('cart') || '[]');
+window.activeList = [];
+window.currentIndex = 0;
+
+function refreshCartUI(){
+  document.getElementById('cartCount').innerText = window.cart.length;
+  localStorage.setItem('cart', JSON.stringify(window.cart));
+}
+refreshCartUI();
+
+function imageUrl(path){
+  if(!path) return '';
+  if(path.startsWith('http')) return path;
+  if(path.startsWith('/')) return "http://localhost:8081"+path;
+  return "http://localhost:8081/"+path;
+}
+
+function numberFormat(v){ return (v==null)?'0':Number(v).toLocaleString('en-IN'); }
+function escapeHtml(s){ return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+async function isLoggedIn(){
+  try{
+    const res = await fetch("http://localhost:8081/api/user/check",{method:"GET",credentials:"include"});
+    if(!res.ok) return false;
+    const data = await res.json();
+    return data.loggedIn===true;
+  }catch{return false;}
+}
+
+// Featured watch click
+async function featuredBuyCheck(el){
+  const p = {
+    id: el.dataset.id || Math.random().toString(36).slice(2,9),
+    name: el.dataset.name,
+    brand: el.dataset.brand,
+    model: el.dataset.model || '',
+    price: Number(el.dataset.price || 0),
+    imagePath: el.dataset.image,
+    description: el.dataset.desc || ''
+  };
+  const loggedIn = await isLoggedIn();
+  if(!loggedIn){
+    sessionStorage.setItem("redirectAfterLogin", `address?product=${p.id}`);
+    const modal = document.getElementById("loginModal");
+    if(modal) modal.style.display = "block";
+    else window.location.href = "/login";
+    return;
+  }
+  window.activeList = [p];
+  window.currentIndex = 0;
+  updateModal();
+  showModal();
+}
+
+// Modal functions
+function openModalFromData(idx){window.currentIndex=idx;updateModal();showModal();}
+function updateModal(){
+  const p=window.activeList[window.currentIndex]||{};
+  document.getElementById('modal-img').src=p.imagePath||'img-placeholder.png';
+  document.getElementById('modalTitle').innerText=p.name||'';
+  document.getElementById('modalBrand').innerText=(p.brand||'')+(p.model?' • '+p.model:'');
+  document.getElementById('modalPrice').innerText='₹'+(p.price||0);
+  document.getElementById('modalDetails').innerHTML=`<div><strong>Description:</strong> ${p.description||'No description'}</div>`;
+}
+function showModal(){const m=document.getElementById('productModal');m.classList.add('open');document.body.style.overflow='hidden';}
+function closeModal(){const m=document.getElementById('productModal');m.classList.remove('open');document.body.style.overflow='';}
+
+// Cart & Buy
+// Cart & Buy
+function addToCartModalProduct(){
+  const p = window.activeList[window.currentIndex];
+  if(!p) return;
+
+  // Prepare cart item with 'img' key
+  const item = {
+    id: p.id,
+    name: p.name,
+    brand: p.brand,
+    price: p.price,
+    img: p.imagePath || '',   // <-- this ensures image shows on cartSaved page
+    description: p.description || '',
+    qty: 1
+  };
+
+  // Check if already in cart
+  const existing = window.cart.find(x => x.name === item.name && x.price === item.price);
+  if(existing){
+    existing.qty = (existing.qty || 1) + 1;
+  } else {
+    window.cart.push(item);
+  }
+
+  // Save cart & update UI
+  localStorage.setItem('cart', JSON.stringify(window.cart));
+  refreshCartUI();
+  showToast('Added to cart');
+}
+
+function openCart(){
+  if(window.cart.length===0){alert('Cart is empty'); return;}
+  let s='Cart:\n';
+  window.cart.forEach((c,i)=>s+=`${i+1}. ${c.name} x${c.qty} — ₹${numberFormat(c.price)}\n`);
+  s+='Total: ₹'+window.cart.reduce((a,b)=>a+(b.price*(b.qty||1)),0);
+  if(confirm(s+'\n\nProceed to checkout?')) window.location.href='address';
+}
+
+let toastTimer;
+function showToast(msg,ms=1400){const t=document.getElementById('toast');t.innerText=msg;t.style.display='block';clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.style.display='none',ms);}
+
+document.getElementById('productModal').addEventListener('click',e=>{if(e.target===document.getElementById('productModal')) closeModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape') closeModal();});
+
+// Quick Buy (for all products)
+async function quickBuy(index){
+  const product = window.activeList[index]; if(!product) return;
+  const loggedIn = await isLoggedIn();
+  if(!loggedIn){
+    sessionStorage.setItem("redirectAfterLogin", `address?product=${product.id}`);
+    const modal = document.getElementById("loginModal");
+    if(modal) modal.style.display="block";
+    else window.location.href="/login";
+    return;
+  }
+  window.location.href=`address?product=${product.id}`;
+}
+
+// Load products from API
+async function loadProducts(){
+  try{
+    const res = await fetch(API,{cache:'no-store'}); if(!res.ok) throw 'network';
+    const data = await res.json(); 
+    const box=document.getElementById('productContainer'); box.innerHTML=''; window.activeList=[];
+    const products = (data||[]).filter(p=>((p.category||'').toLowerCase().split(',').map(c=>c.trim()).includes('men')));
+    products.forEach((p,idx)=>{
+      const card=document.createElement('div'); card.className='product-card';
+      card.innerHTML=`<div class="thumb-wrap"><img class="product-thumb" src="${imageUrl(p.imagePath)}" alt="${escapeHtml(p.name)}"></div>
+        <div class="product-body">
+          <div class="product-name">${escapeHtml(p.name)}</div>
+          <div class="product-meta">${escapeHtml(p.brand||'')}${p.model?' • '+escapeHtml(p.model):''}</div>
+          <div class="product-row"><div class="price">₹${numberFormat(p.price)}</div><div>
+          <button class="btn btn-ghost" style="margin-right:6px;" onclick="openModalFromData(${idx})">View</button>
+          <button class="btn btn-primary" onclick="quickBuy(${idx})">Buy Online</button></div></div>
+        </div>`;
+      box.appendChild(card); window.activeList.push(p);
+    });
+  }catch(e){
+    console.warn(e);
+    document.getElementById('productContainer').innerHTML='<div style="text-align:center;color:var(--muted);margin-top:20px">Failed to load products.</div>';
+  }
+}
+
+// Initial load
+loadProducts();
+</script>
+
+
+</body>
+</html>
